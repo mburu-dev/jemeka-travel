@@ -1,0 +1,15 @@
+{
+  "name": "@jemeka/db",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/schema.ts",
+  "exports": {
+    ".": "./src/schema.ts",
+    "./relations": "./src/relations.ts",
+    "./seed": "./src/seed.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "@libsql/client": "^0.14.0"
+  }
+}

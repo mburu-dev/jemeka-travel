@@ -1,0 +1,74 @@
+import { z } from "zod";
+import { createRouter, publicQuery } from "./middleware";
+import { getDb } from "./queries/connection";
+import { destinations, packages } from "@db/schema";
+import { eq, and } from "drizzle-orm";
+
+export const destinationRouter = createRouter({
+  list: publicQuery
+    .input(
+      z.object({
+        region: z.string().optional(),
+        featured: z.boolean().optional(),
+      }).optional()
+    )
+    .query(async ({ input }) => {
+      const db = getDb();
+      const conditions = [];
+
+      if (input?.region) {
+        conditions.push(eq(destinations.region, input.region as "africa" | "europe" | "asia" | "americas" | "oceania"));
+      }
+      if (input?.featured !== undefined) {
+        conditions.push(eq(destinations.isFeatured, input.featured));
+      }
+      conditions.push(eq(destinations.isActive, true));
+
+      const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+      return db.query.destinations.findMany({
+        where,
+        orderBy: (destinations, { desc }) => [desc(destinations.isFeatured)],
+      });
+    }),
+
+  getBySlug: publicQuery
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ input }) => {
+      const db = getDb();
+      const result = await db.query.destinations.findFirst({
+        where: eq(destinations.slug, input.slug),
+      });
+
+      if (!result) {
+        throw new Error("Destination not found");
+      }
+
+      // Get packages for this destination
+      const destinationPackages = await db.query.packages.findMany({
+        where: and(
+          eq(packages.destinationId, result.id),
+          eq(packages.isActive, true)
+        ),
+      });
+
+      return { ...result, packages: destinationPackages };
+    }),
+
+  getById: publicQuery
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      const db = getDb();
+      return db.query.destinations.findFirst({
+        where: eq(destinations.id, input.id),
+      });
+    }),
+
+  featured: publicQuery.query(async () => {
+    const db = getDb();
+    return db.query.destinations.findMany({
+      where: and(eq(destinations.isFeatured, true), eq(destinations.isActive, true)),
+      orderBy: (destinations, { asc }) => [asc(destinations.name)],
+    });
+  }),
+});

@@ -1,0 +1,779 @@
+# Jemeka Tours and Travel Website Development Project Plan
+
+---
+
+## Phase 1: Comprehensive Market & Competitor Research
+
+### 1.1 Top 5 Leading Travel Website Competitor Analysis
+
+Based on 2026 industry analysis, the following five platforms represent the gold standard for tour and travel website design, functionality, and conversion optimization:
+
+| Rank | Competitor | Core Strength | Key Differentiator |
+|------|-----------|---------------|-------------------|
+| 1 | **Skyscanner** | Gestalt-driven UI/UX, contrast psychology, minimalist design | Superior information architecture; "Search flights" focal point using color contrast; zero cognitive load booking flow  |
+| 2 | **KimKim.com** | Custom itinerary builder, human-centric design | Seamless trip customization with real agent connectivity; adventure-focused visual storytelling  |
+| 3 | **Virtuoso.com** | Luxury positioning, premium aesthetics | Elegant typography, cinematic imagery, exclusivity signaling; blends inspiration with practical booking  |
+| 4 | **Booking.com** | Conversion optimization, persistent CTAs | Sticky booking bars, rate transparency, urgency signaling; "Book Now" visibility on every scroll  |
+| 5 | **WP Travel Engine Ecosystem** | Open-source booking architecture, tour operator focus | 20,000+ active installations; native WordPress plugin with itinerary builders, pricing tables, availability calendars  |
+
+### 1.2 UX & Design Insights from Leaders
+
+**Experience-First Visual Storytelling**
+Modern travel websites use immersive imagery, video backgrounds, and carefully crafted layouts to make users "feel the destination before booking," while keeping pricing and actions clearly visible .
+
+**Trust-Centered Design Systems**
+Top performers highlight reviews, ratings, guarantees, and transparent pricing earlier in the journey. Modern trust design looks native—not like bolted-on badges from 2012 .
+
+**Mobile-First Booking Dominance**
+Over 60% of travel booking sessions are completed via mobile devices, yet desktop users spend 6m 59s vs. 3m 30s on mobile. Mobile-first design is non-negotiable .
+
+**Speed as a Conversion Feature**
+A website loading in 1 second achieves 2.5x higher conversion rate than one loading in 5 seconds. Travel sites in the top 20% load under 2.2 seconds; mobile loads ~70.9% slower than desktop .
+
+### 1.3 Performance & Conversion Benchmarks
+
+| Metric | Industry Average | Top 20% | Top 10% |
+|--------|-----------------|---------|---------|
+| Page Load Time | 3.9s (desktop) | <2.2s | <1.7s |
+| Conversion Rate | 0.2–2% | 2–4% | 3–4%+ |
+| Cart Abandonment | 80% | 68–74% | <68% |
+| Mobile Bounce Rate | 51.5% | 42% | <35% |
+| Revenue Per Visit (Q4) | $8.75 | $9.42 | $10+ |
+
+Sources: Littledata, Contentsquare, Promodo 2026 
+
+### 1.4 Industry Trends for 2026
+
+1. **AI-Powered Personalization**: Dynamic content based on user behavior, location, and interests 
+2. **Immersive Media**: 360° tours, interactive maps, short destination videos 
+3. **Sustainable Travel Features**: Eco-friendly tour highlighting and responsible tourism options 
+4. **Rate Transparency Upfront**: Total price context early; plain language for fees and policies 
+5. **Accessibility Baked In**: Contrast, keyboard navigation, form labels, alt text as conversion enablers 
+6. **Voice Search Optimization**: Growing travel queries through voice assistants 
+
+---
+
+## Phase 2: Prerequisite Documentation Development
+
+### Document 1: Project Requirements Specification (PRS)
+
+**1.1 Functional Requirements**
+
+| Module | Feature | Priority | Open-Source Tool |
+|--------|---------|----------|----------------|
+| **Booking Engine** | Real-time availability calendar, multi-currency pricing, deposit/payment plans, booking modifications | P0 | Custom React + Node.js + PostgreSQL |
+| **Destination Guides** | Interactive maps, photo galleries, seasonal tips, neighborhood guides | P1 | Leaflet.js (maps), Strapi (CMS) |
+| **Tour Packages** | Filterable listings, itinerary builder, PDF export, group/private toggles | P0 | Custom + Strapi |
+| **Payment Integration** | Stripe/PayPal/MPesa integration, PCI-compliant tokenization, invoice generation | P0 | Stripe SDK (open API), PayPal SDK |
+| **User Accounts** | Profile management, booking history, wishlists, loyalty points | P1 | Keycloak (auth) or NextAuth.js |
+| **Admin Dashboard** | Booking management, content CRUD, analytics, user roles, revenue reports | P0 | React Admin + Node.js API |
+| **Search & Discovery** | Full-text search, filters (budget, duration, activity type), autocomplete | P1 | Elasticsearch (Open Source) or Meilisearch |
+| **Reviews & Testimonials** | Star ratings, photo reviews, moderation workflow, verified badges | P2 | Custom + Strapi |
+| **Blog/Resources** | SEO-optimized articles, category taxonomy, related content | P2 | Strapi + Next.js |
+| **Notifications** | Email confirmations, SMS reminders, booking updates | P1 | Nodemailer + Twilio API |
+
+**1.2 Non-Functional Requirements**
+
+| Requirement | Target | Verification Method |
+|-------------|--------|---------------------|
+| Page Load Time | <2 seconds (First Contentful Paint) | Lighthouse CI, WebPageTest |
+| Time to Interactive | <3.5 seconds | Lighthouse CI |
+| Uptime | 99.9% | Uptime Kuma (open-source monitoring) |
+| Accessibility | WCAG 2.1 AA full compliance | axe-core automated + manual NVDA/VoiceOver testing |
+| SEO | Core Web Vitals "Good" across all metrics | Google Search Console, Lighthouse |
+| Security | OWASP Top 10 mitigation, PCI-DSS SAQ-A for payments | Snyk, OWASP ZAP |
+| Browser Support | Last 2 versions of Chrome, Firefox, Safari, Edge | Playwright cross-browser testing |
+| Mobile Responsiveness | Perfect rendering on 320px–2560px viewports | BrowserStack + physical device testing |
+
+**1.3 Accessibility Compliance (WCAG 2.1 AA)**
+
+Per W3C standards and legal requirements :
+- **Perceivable**: Alt text for all destination images, captions for promotional videos, 4.5:1 contrast ratio minimum
+- **Operable**: Full keyboard navigation for booking flows, visible focus indicators, skip-to-content links
+- **Understandable**: Plain language for cancellation policies, predictable navigation patterns, error prevention in forms
+- **Robust**: Valid HTML5 semantic markup, ARIA labels for dynamic content, screen reader compatibility
+
+---
+
+### Document 2: UX/UI Design Brief
+
+**2.1 Brand Identity**
+
+- **Positioning**: Authentic, adventurous, trustworthy—Jemeka Tours and Travel inspires confidence while sparking wanderlust
+- **Personality**: Warm, knowledgeable, approachable, premium-but-accessible
+- **Voice**: Enthusiastic yet clear; storytelling-driven; culturally respectful
+
+**2.2 Color Palette**
+
+| Role | Hex | Usage |
+|------|-----|-------|
+| Primary | `#0F4C75` | Headers, primary CTAs, trust elements |
+| Secondary | `#F4A261` | Accent buttons, highlights, warmth |
+| Tertiary | `#2A9D8F` | Success states, eco-friendly badges |
+| Neutral Dark | `#264653` | Body text, footer |
+| Neutral Light | `#F8F9FA` | Backgrounds, cards |
+| Accent Alert | `#E76F51` | Urgency, limited availability |
+
+**2.3 Typography System**
+
+| Element | Font | Weight | Size | Line Height |
+|---------|------|--------|------|-------------|
+| H1 (Hero) | Playfair Display | 700 | 48–64px | 1.1 |
+| H2 (Section) | Playfair Display | 600 | 36–48px | 1.2 |
+| H3 (Card) | Inter | 600 | 24px | 1.3 |
+| Body | Inter | 400 | 16–18px | 1.6 |
+| Caption | Inter | 400 | 14px | 1.4 |
+| CTA Button | Inter | 600 | 16px | 1.0 |
+
+**2.4 Layout Framework**
+
+- **Grid**: 12-column CSS Grid, max-width 1280px, 24px gutters
+- **Spacing**: 8px base unit (8, 16, 24, 32, 48, 64, 96px)
+- **Breakpoints**: Mobile (320–767px), Tablet (768–1023px), Desktop (1024–1439px), Wide (1440px+)
+- **Z-Index Hierarchy**: Modal (1000), Sticky Header (100), Booking Bar (50), Content (1)
+
+**2.5 Animation & Motion Guidelines**
+
+| Animation | Trigger | Duration | Easing | Purpose |
+|-----------|---------|----------|--------|---------|
+| Hero parallax | Scroll | Continuous | ease-out | Immersion |
+| Card lift | Hover | 300ms | cubic-bezier(0.4, 0, 0.2, 1) | Engagement |
+| Page transition | Route change | 400ms | ease-in-out | Smoothness |
+| Form validation | Blur/Submit | 200ms | ease | Feedback |
+| Sticky booking | Scroll > 400px | 300ms | ease | Persistence |
+
+**Principle**: All animations must respect `prefers-reduced-motion` and be disableable per WCAG 2.1 criterion 2.3.3 .
+
+**2.6 Component Library**
+
+- **Hero Section**: Full-bleed imagery with overlaid search/booking widget
+- **Destination Cards**: 16:9 image, gradient overlay, title, price, duration, rating
+- **Booking Widget**: Sticky bottom bar (mobile) / sidebar (desktop) with date picker, travelers, total price
+- **Trust Bar**: Reviews snippet, secure payment badge, "Why Book Direct" benefits
+- **Itinerary Accordion**: Day-by-day breakdown with expandable details
+- **Testimonial Carousel**: Auto-advancing, pause on hover, manual controls
+
+---
+
+### Document 3: Technical Architecture Document
+
+**3.1 Technology Stack (100% Open Source)**
+
+| Layer | Technology | Version | Purpose |
+|-------|-----------|---------|---------|
+| **Frontend Framework** | Next.js (App Router) | 15.x | SSR/SSG, SEO, performance |
+| **UI Library** | React | 19.x | Component architecture |
+| **Styling** | Tailwind CSS | 4.x | Utility-first CSS |
+| **Animation** | Framer Motion | 12.x | React animations |
+| **Backend Runtime** | Node.js | 22.x LTS | Server-side logic |
+| **API Framework** | Express.js / Fastify | 5.x / 5.x | RESTful API |
+| **Database** | PostgreSQL | 17.x | Relational data, ACID compliance |
+| **Cache** | Redis | 7.x | Session store, query cache |
+| **Search** | Meilisearch | 1.x | Full-text search, typo-tolerant |
+| **CMS** | Strapi | 5.x | Headless content management |
+| **Auth** | Keycloak | 26.x | SSO, OAuth2, role-based access |
+| **File Storage** | MinIO | 2026.x | S3-compatible object storage |
+| **Queue** | BullMQ (Redis) | 5.x | Background jobs, email sending |
+| **Monitoring** | Uptime Kuma + Grafana | Latest | Uptime, metrics, alerting |
+| **Containerization** | Docker + Docker Compose | 27.x | Local dev, deployment |
+| **Reverse Proxy** | Nginx | 1.27.x | Load balancing, SSL termination |
+| **OS** | Ubuntu Server LTS | 24.04 | Production hosting |
+
+**3.2 System Architecture Diagram**
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Client Browser│────▶│   CDN (Nginx)   │────▶│  Next.js (Vercel│
+│   Mobile App    │     │  + Static Assets│     │  / Self-hosted) │
+└─────────────────┘     └─────────────────┘     └────────┬────────┘
+                                                         │
+                              ┌──────────────────────────┼──────────┐
+                              ▼                          ▼          ▼
+                        ┌─────────┐              ┌─────────┐ ┌─────────┐
+                        │  Strapi │              │ Node.js │ │Meilisearch
+                        │  (CMS)  │              │  API    │ │ (Search)│
+                        └────┬────┘              └────┬────┘ └─────────┘
+                             │                          │
+                        ┌────┴────┘              ┌────┬────┬─────────┐
+                        │PostgreSQL│              │Redis│MinIO│Keycloak │
+                        │  (DB)   │              │Cache│Store│  (Auth) │
+                        └─────────┘              └─────┴─────┴─────────┘
+```
+
+**3.3 Security Protocols**
+
+- **Data Encryption**: AES-256 for data at rest, TLS 1.3 for data in transit
+- **Authentication**: JWT with refresh token rotation, HTTP-only cookies, CSRF protection
+- **Payment Security**: PCI-DSS SAQ-A compliance via tokenization (Stripe Elements/PayPal SDK); no card data touches Jemeka servers
+- **Input Validation**: Zod schema validation on all API inputs; parameterized queries (SQL injection prevention)
+- **XSS Protection**: Content Security Policy headers, React automatic escaping, DOMPurify for rich text
+- **Rate Limiting**: express-rate-limit (100 req/min per IP), stricter limits on auth endpoints
+- **Dependency Scanning**: Snyk CLI in CI/CD pipeline
+- **Backup Strategy**: Daily automated PostgreSQL dumps to MinIO, 30-day retention
+
+**3.4 Scalability Plan**
+
+- **Horizontal Scaling**: Docker Swarm/Kubernetes for container orchestration
+- **Database**: Read replicas for search queries; connection pooling via PgBouncer
+- **Caching**: Redis for session storage, query result caching, and rate limiting
+- **CDN**: Nginx caching layer + Cloudflare (free tier) for global static asset delivery
+- **Search**: Meilisearch horizontal scaling via master/slave configuration
+
+---
+
+### Document 4: Sitemap & User Journey Map
+
+**4.1 Site Structure**
+
+```
+Homepage
+├── Destinations
+│   ├── Destination Category (Africa, Europe, Asia, etc.)
+│   ├── Destination Detail (e.g., "Serengeti Safari")
+│   └── Interactive Map
+├── Tour Packages
+│   ├── Package Listing (with filters)
+│   ├── Package Detail (itinerary, inclusions, gallery)
+│   └── Compare Packages
+├── Experiences
+│   ├── Activity Types (Adventure, Cultural, Wildlife)
+│   └── Seasonal Specials
+├── Booking Flow
+│   ├── Select Dates & Travelers
+│   ├── Add Extras (flights, insurance, gear)
+│   ├── Review & Confirm
+│   ├── Payment (Stripe/PayPal)
+│   └── Confirmation & Itinerary Download
+├── About Jemeka
+│   ├── Our Story
+│   ├── Team
+│   ├── Sustainability Commitment
+│   └── Awards & Certifications
+├── Resources
+│   ├── Travel Blog
+│   ├── Destination Guides
+│   ├── Travel Tips & FAQs
+│   └── Visa Requirements
+├── Testimonials
+│   ├── Customer Reviews
+│   ├── Photo Gallery
+│   └── Video Stories
+├── Contact
+│   ├── Inquiry Form
+│   ├── Office Locations
+│   └── Live Chat (Tawk.to open-source alternative)
+└── Account
+    ├── Dashboard
+    ├── My Bookings
+    ├── Wishlist
+    ├── Profile Settings
+    └── Loyalty Program
+```
+
+**4.2 Primary User Journey: First-Time Visitor to Booking**
+
+| Stage | Page/Action | Emotional State | Design Objective | Conversion Tactic |
+|-------|-------------|-----------------|------------------|-------------------|
+| **Awareness** | Social/Search → Homepage | Curious, skeptical | Build trust instantly | Hero video, trust bar, "Why Jemeka" social proof |
+| **Interest** | Browse Destinations | Inspired, exploratory | Spark wanderlust | Immersive imagery, 360° previews, "Feel the journey" copy |
+| **Consideration** | View Package Details | Evaluating, comparing | Answer all questions | Transparent pricing, detailed itinerary, FAQ accordion, comparison tool |
+| **Intent** | Start Booking | Committed, cautious | Remove friction | Sticky booking bar, progress indicator, guest checkout option |
+| **Purchase** | Payment & Confirmation | Excited, anxious | Reassure and delight | Security badges, clear cancellation policy, instant confirmation email |
+| **Loyalty** | Post-booking Account | Anticipatory | Build relationship | Itinerary download, countdown timer, packing checklist, referral incentive |
+
+**4.3 Secondary User Journey: Returning Customer**
+
+| Stage | Action | Feature |
+|-------|--------|---------|
+| Recognition | Login | Personalized homepage with "Welcome back" + past viewed packages |
+| Efficiency | Search | Pre-filled preferences from previous bookings |
+| Upgrade | Account Dashboard | "Complete your profile" loyalty incentive, exclusive member pricing |
+| Advocacy | Post-Trip | Review request, photo upload, referral code generation |
+
+---
+
+### Document 5: Content Strategy Document
+
+**5.1 Content Pillars**
+
+| Pillar | Purpose | Content Types | SEO Target |
+|--------|---------|---------------|------------|
+| **Destination Inspiration** | Top-of-funnel awareness | Photo essays, 360° videos, "Best time to visit" guides | Long-tail destination keywords |
+| **Practical Planning** | Mid-funnel consideration | Packing lists, visa guides, health requirements, currency tips | Informational queries, featured snippets |
+| **Tour Packages** | Bottom-funnel conversion | Detailed itineraries, pricing breakdowns, inclusion/exclusion clarity | Commercial intent keywords |
+| **Trust & Social Proof** | Conversion confidence | Customer stories, video testimonials, awards, media mentions | Brand + "reviews" keywords |
+| **Sustainable Travel** | Values alignment | Eco-tourism features, community impact stories, carbon offset info | ESG-related travel queries |
+
+**5.2 Content Requirements by Page**
+
+| Page | Required Content | Word Count | Media |
+|------|-----------------|------------|-------|
+| Homepage | Value proposition, 3 featured packages, trust signals, newsletter CTA | 300–500 | Hero video (15s loop), 6 destination thumbnails |
+| Destination Detail | Overview, best time to visit, top activities, practical info, related packages | 1,500–2,000 | 12–20 photos, 1 embedded map, 1 video |
+| Package Detail | Itinerary (day-by-day), inclusions/exclusions, pricing, FAQs, reviews | 2,000–3,000 | Gallery (20+ images), downloadable PDF, video testimonial |
+| Blog Post | Hook, practical advice, internal links, CTA | 1,200–2,000 | 3–5 images, infographic potential |
+| About Page | Origin story, mission, team bios, sustainability | 800–1,200 | Team photos, behind-the-scenes video |
+
+**5.3 SEO Optimization Plan**
+
+- **Technical SEO**: Next.js App Router for semantic URLs (`/destinations/serengeti-safari`), automatic sitemap generation, structured data (Schema.org TourBooking, FAQ, BreadcrumbList)
+- **On-Page SEO**: Target keyword in H1, meta description <160 chars, alt text with descriptive keywords, internal linking hub-and-spoke model
+- **Performance SEO**: Core Web Vitals optimization, image WebP/AVIF format, lazy loading, font subsetting
+- **Local SEO**: Google Business Profile optimization, local citation building, location-specific landing pages
+
+**5.4 Content Governance**
+
+- **Tone**: Enthusiastic but authoritative; culturally sensitive; avoid superlatives without evidence
+- **Review Cycle**: Quarterly content audits; update seasonal information before peak booking windows
+- **Accessibility**: All images require alt text; videos require captions; PDFs must be screen-reader accessible
+
+---
+
+### Document 6: Project Timeline & Milestones
+
+**6.1 Gantt Chart Overview**
+
+| Phase | Duration | Start | End | Key Deliverables |
+|-------|----------|-------|-----|------------------|
+| **Discovery & Planning** | 2 weeks | Week 1 | Week 2 | Finalized PRS, Design Brief, Architecture Doc |
+| **Design** | 3 weeks | Week 3 | Week 5 | Figma wireframes, high-fidelity mockups, design system, prototype |
+| **Frontend Development** | 4 weeks | Week 6 | Week 9 | Next.js setup, component library, static pages, responsive layouts |
+| **Backend Development** | 4 weeks | Week 6 | Week 9 | API development, database schema, auth system, CMS integration |
+| **Booking Engine** | 3 weeks | Week 10 | Week 12 | Availability calendar, pricing logic, payment integration, admin dashboard |
+| **Content Population** | 2 weeks | Week 11 | Week 12 | Destination guides, tour packages, blog posts, imagery |
+| **Integration & Testing** | 2 weeks | Week 13 | Week 14 | API integration, E2E testing, security audit, performance optimization |
+| **UAT & Bug Fixes** | 1 week | Week 15 | Week 15 | Client review, feedback implementation, final polish |
+| **Deployment & Launch** | 1 week | Week 16 | Week 16 | Production deployment, DNS cutover, monitoring setup, launch checklist |
+| **Post-Launch Support** | 4 weeks | Week 17 | Week 20 | Monitoring, bug fixes, performance tuning, training documentation |
+
+**6.2 Critical Path**
+
+1. Database schema design → API development → Frontend integration → E2E testing
+2. Design system completion → Component library → Page implementation → Responsive testing
+3. Payment gateway sandbox → Integration → PCI compliance verification → Production keys
+
+**6.3 Milestone Definitions**
+
+| Milestone | Criteria | Sign-Off |
+|-----------|----------|----------|
+| M1: Design Freeze | All mockups approved, design tokens exported, component specs documented | UX Lead + Client |
+| M2: API Stable | All endpoints documented in OpenAPI, Postman collection shared, 90% unit test coverage | Tech Lead |
+| M3: Feature Complete | All P0/P1 features functional in staging, content populated, analytics tracking live | PM + QA |
+| M4: Launch Ready | Lighthouse score >90 all categories, zero critical bugs, security scan passed, deployment runbook complete | All stakeholders |
+
+---
+
+### Document 7: Quality Assurance Framework
+
+**7.1 Testing Pyramid**
+
+| Level | Tool | Coverage Target | Responsibility |
+|-------|------|-----------------|---------------|
+| **Unit Tests** | Vitest (Jest alternative) | 80% code coverage | Developers |
+| **Integration Tests** | Vitest + MSW | All API endpoints, database queries | Developers |
+| **E2E Tests** | Playwright | Critical user journeys (booking, search, auth) | QA Engineers |
+| **Visual Regression** | Chromatic / Storybook | All UI components across breakpoints | UI Developers |
+| **Accessibility** | axe-core + manual | WCAG 2.1 AA compliance | QA + Accessibility Auditor |
+| **Performance** | Lighthouse CI + WebPageTest | <2s FCP, <3.5s TTI | DevOps + Frontend |
+| **Security** | OWASP ZAP + Snyk | OWASP Top 10 mitigated | Security Lead |
+
+**7.2 Cross-Browser & Device Matrix**
+
+| Browser | Desktop | Tablet | Mobile |
+|---------|---------|--------|--------|
+| Chrome (latest) | ✅ | ✅ | ✅ |
+| Firefox (latest) | ✅ | ✅ | ✅ |
+| Safari (latest) | ✅ | ✅ | ✅ |
+| Edge (latest) | ✅ | — | — |
+
+**7.3 Accessibility Testing Protocol**
+
+1. **Automated**: axe-core in CI/CD for every PR; Lighthouse accessibility audit >90
+2. **Keyboard**: Full navigation test without mouse; visible focus indicators; no keyboard traps
+3. **Screen Reader**: NVDA (Windows), VoiceOver (macOS/iOS), TalkBack (Android) testing
+4. **Color Contrast**: All text meets 4.5:1 ratio (3:1 for large text); color-blind simulation
+5. **Motion**: `prefers-reduced-motion` respected; no auto-playing content without pause controls
+
+**7.4 Performance Testing Protocol**
+
+| Test | Tool | Frequency | Target |
+|------|------|-----------|--------|
+| Lighthouse CI | GitHub Action | Every PR | 90+ all categories |
+| WebPageTest | Manual | Weekly | <2s FCP, <3.5s TTI |
+| Load Testing | k6 / Artillery | Pre-release | 500 concurrent users, <500ms p95 response |
+| Bundle Analysis | @next/bundle-analyzer | Every release | <200KB initial JS bundle |
+
+**7.5 Bug Severity Classification**
+
+| Severity | Definition | SLA |
+|----------|-----------|-----|
+| P0 (Critical) | Booking flow broken, payment failure, security vulnerability | 4 hours |
+| P1 (High) | Major feature unusable, significant data loss risk | 24 hours |
+| P2 (Medium) | Feature degradation, workaround available | 72 hours |
+| P3 (Low) | Cosmetic issues, edge cases | Next sprint |
+
+---
+
+## Phase 3: Master AI Agent Implementation Prompt
+
+### Master Prompt: Jemeka Tours and Travel Full-Stack Website Implementation
+
+```markdown
+# MASTER IMPLEMENTATION PROMPT: Jemeka Tours and Travel Website
+
+## CONTEXT
+You are an expert full-stack development team implementing the Jemeka Tours and Travel website—a premium tour operator platform requiring immersive visual storytelling, robust booking functionality, and conversion optimization. ALL tools, frameworks, and dependencies must be 100% open-source. No proprietary software, no paid SaaS dependencies (except unavoidable payment processor APIs).
+
+## TECHNOLOGY STACK (100% OPEN SOURCE - MANDATORY)
+- Frontend: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 4, Framer Motion
+- Backend: Node.js 22 LTS, Express.js 5, TypeScript
+- Database: PostgreSQL 17 (with pgvector for future AI features)
+- ORM: Prisma 6 (open-source data layer)
+- Cache/Queue: Redis 7 (BullMQ for background jobs)
+- Search: Meilisearch 1 (open-source, typo-tolerant)
+- CMS: Strapi 5 (headless, self-hosted)
+- Auth: Keycloak 26 (OAuth2, SSO, RBAC) OR NextAuth.js 4 with custom credentials
+- Storage: MinIO (S3-compatible, self-hosted)
+- Monitoring: Uptime Kuma + Grafana (self-hosted)
+- Testing: Vitest (unit), Playwright (E2E), Storybook (visual), axe-core (a11y)
+- DevOps: Docker 27, Docker Compose, Nginx 1.27, Ubuntu 24.04 LTS
+- Payment: Stripe SDK + PayPal SDK (API integration only; no proprietary platform lock-in)
+
+## PHASE 1: ENVIRONMENT SETUP & PROJECT SCAFFOLDING
+
+### Step 1.1: Repository Structure
+Initialize a monorepo with the following structure:
+```
+jemeka-travel/
+├── apps/
+│   ├── web/                 # Next.js frontend
+│   ├── api/                 # Express.js backend
+│   └── cms/                 # Strapi headless CMS
+├── packages/
+│   ├── shared/              # Shared types, utilities, schemas
+│   ├── ui/                  # React component library (shadcn/ui base)
+│   └── config/              # ESLint, TS, Tailwind configs
+├── docker-compose.yml
+└── README.md
+```
+
+### Step 1.2: Docker Development Environment
+Create a `docker-compose.yml` with services:
+- PostgreSQL 17 (with healthcheck)
+- Redis 7 (persistent volume)
+- Meilisearch 1
+- MinIO (with default bucket creation)
+- Nginx (reverse proxy, dev config)
+
+### Step 1.3: Code Quality Setup
+Configure:
+- ESLint with strict TypeScript rules
+- Prettier with consistent formatting
+- Husky pre-commit hooks (lint-staged)
+- Conventional commit enforcement
+- Branch protection rules documentation
+
+## PHASE 2: DESIGN SYSTEM & COMPONENT LIBRARY
+
+### Step 2.1: Design Tokens
+Implement in Tailwind config:
+- Color palette (Primary: #0F4C75, Secondary: #F4A261, Tertiary: #2A9D8F)
+- Typography (Playfair Display for headings, Inter for body)
+- Spacing scale (8px base)
+- Breakpoints (sm:640, md:768, lg:1024, xl:1280, 2xl:1536)
+- Animation timings (fast:150ms, normal:300ms, slow:500ms)
+- Shadows and border radii
+
+### Step 2.2: Core Components (with Storybook stories)
+Build accessible, responsive components:
+- Button (variants: primary, secondary, ghost, danger; sizes: sm, md, lg)
+- Input (with label, error state, helper text, icon support)
+- Select/Dropdown (custom styled, keyboard navigable)
+- Card (destination, package, testimonial, blog variants)
+- Modal/Dialog (focus trap, ESC close, aria-labelledby)
+- Accordion (itinerary display, FAQ)
+- Carousel (testimonials, image gallery, touch/swipe support)
+- DatePicker (range selection, disabled dates, mobile optimized)
+- BookingWidget (sticky, responsive, real-time price calculation)
+- MapEmbed (Leaflet.js integration, custom markers)
+
+### Step 2.3: Accessibility Requirements
+- Every component must pass axe-core automated tests
+- All interactive elements must be keyboard operable
+- ARIA labels must be dynamic and descriptive
+- Color contrast must meet WCAG 2.1 AA (4.5:1 normal text, 3:1 large text)
+- Respect prefers-reduced-motion for all animations
+
+## PHASE 3: BACKEND API DEVELOPMENT
+
+### Step 3.1: Database Schema (Prisma)
+Define models for:
+- User (id, email, passwordHash, profile, role, createdAt, updatedAt)
+- Destination (id, name, slug, description, country, region, images[], coordinates, bestTimeToVisit, tags, seoMeta)
+- TourPackage (id, title, slug, destinationId, duration, maxGroupSize, price, depositAmount, inclusions[], exclusions[], itinerary[], images[], availability[], status, seoMeta)
+- Booking (id, userId, packageId, travelDates, travelers[], extras[], totalPrice, status, paymentStatus, stripePaymentIntentId, createdAt)
+- Review (id, userId, packageId, rating, comment, images[], verified, createdAt)
+- BlogPost (id, title, slug, content, authorId, category, tags, featuredImage, publishedAt, seoMeta)
+- Enquiry (id, name, email, phone, message, destinationInterest, status)
+
+### Step 3.2: API Endpoints
+Implement RESTful endpoints with Zod validation:
+- Auth: POST /auth/register, /auth/login, /auth/refresh, /auth/logout, /auth/forgot-password
+- Destinations: GET /destinations, /destinations/:slug, /destinations/:id/packages
+- Packages: GET /packages, /packages/:slug, /packages/:id/availability
+- Bookings: POST /bookings, GET /bookings/:id, PATCH /bookings/:id, POST /bookings/:id/cancel
+- Payments: POST /payments/intent, /payments/confirm, /payments/webhook
+- Reviews: GET /reviews, POST /reviews, /reviews/:id
+- CMS: Strapi webhooks for cache invalidation
+- Search: GET /search?q=&filters= (powered by Meilisearch)
+
+### Step 3.3: Business Logic
+- Availability engine: Block dates when max capacity reached
+- Pricing engine: Base price + per-person supplements + seasonal multipliers + extras
+- Deposit logic: 30% deposit option with balance due 60 days before travel
+- Cancellation policy: Tiered refund based on notice period (documented in code comments)
+- Booking confirmation: Async email via BullMQ + Nodemailer
+
+### Step 3.4: Security Implementation
+- Helmet.js for security headers (CSP, HSTS, X-Frame-Options)
+- express-rate-limit: 100 req/min general, 10 req/min auth
+- CORS: Whitelist only production domains
+- Input sanitization: DOMPurify for any HTML content
+- SQL injection prevention: Prisma parameterized queries exclusively
+- XSS prevention: CSP headers, React auto-escaping
+- JWT: RS256 algorithm, 15min access / 7day refresh tokens, HTTP-only cookies
+- Password hashing: bcrypt with salt rounds 12
+- Audit logging: All auth events, booking modifications, payment attempts
+
+## PHASE 4: FRONTEND DEVELOPMENT
+
+### Step 4.1: Next.js App Router Setup
+- App directory structure: (marketing), (booking), (account), (admin)
+- Layout hierarchy: RootLayout (auth, analytics) → MarketingLayout (nav, footer) → PageLayout
+- Metadata API: Dynamic OpenGraph images, JSON-LD structured data
+- Route handlers: API proxy for backend (avoid CORS in production)
+- Middleware: Auth session validation, route protection, locale detection
+
+### Step 4.2: Core Pages Implementation
+1. **Homepage**: Hero video background, search widget, featured destinations (3), featured packages (3), trust bar, testimonials carousel, newsletter CTA, blog preview (3)
+2. **Destinations Listing**: Filter sidebar (region, activity, duration), grid/list toggle, pagination, Meilisearch integration
+3. **Destination Detail**: Hero image, description tabs, interactive map (Leaflet), best time widget, related packages, travel tips
+4. **Package Listing**: Advanced filters (price range, dates, group size), sort options, comparison checkbox
+5. **Package Detail**: Image gallery (lightbox), sticky booking widget, itinerary accordion, inclusions/exclusions, pricing breakdown, reviews section, FAQ
+6. **Booking Flow**: 
+   - Step 1: Dates & Travelers (calendar picker, adult/child count, room selection)
+   - Step 2: Extras (flights, insurance, gear rental—checkboxes with real-time price updates)
+   - Step 3: Review (full booking summary, terms acceptance, cancellation policy)
+   - Step 4: Payment (Stripe Elements card form, PayPal button, PCI-compliant iframe)
+   - Step 5: Confirmation (booking reference, PDF download, add-to-calendar, share buttons)
+7. **Account Dashboard**: Profile, booking history, wishlist, loyalty points, referral code
+8. **Admin Dashboard**: React Admin or custom Next.js admin with role-based access
+9. **Blog**: Category listing, article detail with reading progress, related posts
+10. **Static Pages**: About, Contact, FAQs, Terms, Privacy, Accessibility Statement
+
+### Step 4.3: Performance Optimization
+- Images: Next.js Image component with WebP/AVIF, responsive sizes, blur placeholder
+- Fonts: next/font (Playfair Display, Inter), subsetting, font-display: swap
+- Scripts: Lazy load non-critical scripts (analytics, chat)
+- CSS: Tailwind purge, critical CSS extraction
+- State: React Server Components by default; client components only for interactivity
+- Caching: Next.js ISR for destination/package pages, Redis for API response caching
+
+### Step 4.4: Mobile-First Implementation
+- Touch targets minimum 44x44px
+- Bottom sheet for filters on mobile
+- Sticky booking bar (bottom) on mobile, sidebar on desktop
+- Thumb-friendly form inputs (16px font to prevent iOS zoom)
+- Simplified navigation (hamburger with slide-out menu)
+- Optimized images for mobile bandwidth (lower resolution srcset)
+
+## PHASE 5: BOOKING ENGINE & PAYMENT INTEGRATION
+
+### Step 5.1: Availability Calendar
+- React Calendar or custom implementation
+- Visual indicators: Available (green), Limited (orange), Sold Out (red)
+- Date range selection with min/max duration constraints
+- Real-time availability check via API on date selection
+- Price preview updates dynamically based on selection
+
+### Step 5.2: Payment Flow
+- Stripe: PaymentIntent creation (server-side), Elements for card capture, webhook for confirmation
+- PayPal: Order creation, capture, webhook verification
+- 3D Secure: Automatic handling for EU/regulated cards
+- Invoice generation: PDF generation (Puppeteer or react-pdf) post-payment
+- Receipt email: HTML template with booking details, PDF attachment
+
+### Step 5.3: Booking Management
+- Admin: View all bookings, filter by status/date, manual booking creation, refund processing
+- Customer: Reschedule request (subject to availability), cancellation with automatic refund calculation, download documents
+- Notifications: Booking confirmation, payment receipt, reminder (7 days before), post-trip review request
+
+## PHASE 6: CMS INTEGRATION & CONTENT
+
+### Step 6.1: Strapi Configuration
+- Content types: Destination, Package, BlogPost, Testimonial, TeamMember, FAQ, Page
+- Rich text: Editor.js or Strapi default with image upload to MinIO
+- Media library: MinIO provider for Strapi
+- Roles: Admin, Editor, Author
+- Webhooks: Trigger Next.js revalidation on content publish
+
+### Step 6.2: Content Migration
+- Seed script for initial destinations and packages
+- Image optimization pipeline: Upload to MinIO → generate WebP variants → store references
+- SEO metadata: Auto-generate from Strapi fields, override capability per page
+
+## PHASE 7: TESTING & QUALITY ASSURANCE
+
+### Step 7.1: Unit & Integration Testing
+- Vitest configuration with coverage reporting (target: 80%)
+- Test categories: Utility functions, API handlers, database queries, auth flows
+- Mocking: MSW for API mocking, @faker-js for test data
+- Database: Test containers with PostgreSQL in Docker for integration tests
+
+### Step 7.2: E2E Testing (Playwright)
+- Critical paths:
+  1. User registration → login → logout
+  2. Search destination → view package → start booking → abandon → return
+  3. Complete booking flow: select dates → add travelers → payment → confirmation
+  4. Admin: Create package → publish → verify on frontend
+  5. Contact form submission → verify email receipt
+- Cross-browser: Chromium, Firefox, WebKit
+- Mobile emulation: iPhone 14, Pixel 7
+- Visual regression: Screenshot comparison for key pages
+
+### Step 7.3: Accessibility Testing
+- axe-core integration in Playwright tests
+- Manual keyboard navigation audit
+- Screen reader testing (NVDA/VoiceOver) for booking flow
+- Color contrast verification via axe or manual tools
+
+### Step 7.4: Performance Testing
+- Lighthouse CI in GitHub Actions (target: 90+ all categories)
+- WebPageTest manual runs for <2s FCP validation
+- k6 load testing: 500 concurrent users, booking flow stress test
+- Bundle analysis: Track JS/CSS size per release
+
+### Step 7.5: Security Testing
+- OWASP ZAP automated scan on staging
+- Snyk dependency vulnerability check in CI
+- Manual penetration testing: Auth bypass, IDOR on bookings, payment tampering
+- PCI compliance verification: No card data in logs, tokenization verified
+
+## PHASE 8: DEPLOYMENT & DEVOPS
+
+### Step 8.1: Containerization
+- Multi-stage Dockerfiles for web, api, cms (production-optimized, minimal attack surface)
+- Docker Compose for production orchestration (or Kubernetes manifests)
+- Health checks for all services
+- Graceful shutdown handling (SIGTERM)
+
+### Step 8.2: Nginx Configuration
+- Reverse proxy to Next.js (port 3000), API (port 4000), Strapi (port 1337)
+- SSL/TLS: Let's Encrypt (certbot) auto-renewal
+- Gzip/Brotli compression
+- Static asset caching (1 year for hashed files)
+- Rate limiting at edge
+- Security headers: HSTS, CSP, X-Content-Type-Options
+
+### Step 8.3: Database & Storage
+- PostgreSQL: Automated daily backups to MinIO/S3
+- Redis: AOF persistence for queue durability
+- MinIO: Cross-region replication if multi-server
+- Migration strategy: Prisma migrate for schema changes, rollback plan
+
+### Step 8.4: Monitoring & Alerting
+- Uptime Kuma: Monitor web, api, cms endpoints; alert via email/Discord
+- Grafana: PostgreSQL query performance, Redis memory, API response times
+- Log aggregation: Loki or simple structured logging to files
+- Error tracking: Sentry (open-source self-hosted) or GlitchTip
+
+## PHASE 9: POST-DEPLOYMENT & MAINTENANCE
+
+### Step 9.1: Monitoring Protocols
+- Daily: Uptime check review, error log scan
+- Weekly: Performance metric review (Lighthouse trends), booking funnel analysis
+- Monthly: Security patch review, dependency updates, accessibility re-audit
+- Quarterly: Full penetration test, disaster recovery drill, content strategy review
+
+### Step 9.2: Maintenance Tasks
+- Dependency updates: Automated PRs via Dependabot/Renovate
+- Database maintenance: Vacuum, index optimization, query plan review
+- Content updates: Strapi editorial workflow, scheduled publishing
+- SEO monitoring: Search Console review, broken link checks, Core Web Vitals tracking
+
+### Step 9.3: Backup & Recovery
+- Database: Daily automated dumps, 30-day retention, test restore monthly
+- File storage: MinIO versioning, cross-bucket replication
+- Code: Git repository with tagged releases, rollback capability within 15 minutes
+
+## VERIFICATION CHECKPOINTS
+
+| Checkpoint | Criteria | Sign-Off |
+|------------|----------|----------|
+| **C1: Design Alignment** | All components match Figma specs within 2px; animations match timing | Design Lead |
+| **C2: API Stability** | 100% endpoint test coverage; no breaking changes from OpenAPI spec | Backend Lead |
+| **C3: Booking Integrity** | 100 consecutive test bookings succeed; payment webhooks verified | QA Lead |
+| **C4: Accessibility** | axe-core zero violations; manual screen reader pass | Accessibility Lead |
+| **C5: Performance** | Lighthouse 90+ on mobile/desktop; <2s FCP on 3G | Performance Lead |
+| **C6: Security** | OWASP ZAP zero high/critical findings; Snyk zero high-severity | Security Lead |
+| **C7: Content Complete** | All P0 pages populated; Strapi content model validated | Content Lead |
+| **C8: Deployment Ready** | Blue-green deployment tested; rollback <5 minutes; monitoring live | DevOps Lead |
+
+## CODE QUALITY STANDARDS (SOLID PRINCIPLES)
+
+- **Single Responsibility**: Each component/service handles one concern
+- **Open/Closed**: Extend via composition, not modification
+- **Liskov Substitution**: Interface-driven design for payment providers, storage adapters
+- **Interface Segregation**: Small, focused TypeScript interfaces
+- **Dependency Inversion**: Depend on abstractions (interfaces), not concrete implementations
+
+## DOCUMENTATION REQUIREMENTS
+
+- README: Setup instructions, environment variables, architecture overview
+- API Docs: OpenAPI 3.0 spec, auto-generated via Swagger UI
+- Component Docs: Storybook with usage examples, prop tables
+- Deployment Docs: Runbook for common operations (deploy, rollback, backup restore)
+- User Docs: Admin panel guide, content editor training
+
+## MANDATORY CONSTRAINTS
+
+1. ALL software must be open-source (OSI-approved licenses)
+2. NO proprietary CMS (no Contentful, Sanity, etc. — use Strapi)
+3. NO proprietary hosting lock-in (deployable to any VPS/cloud)
+4. NO proprietary analytics (use Plausible or Matomo if needed, or server-side logging)
+5. Payment processors (Stripe/PayPal) are API integrations only, not platform dependencies
+6. All code must be TypeScript with strict mode enabled
+7. All database queries must use Prisma ORM (no raw SQL except migrations)
+8. All auth must use HTTP-only cookies (no localStorage tokens)
+9. All images must be processed via Next.js Image or Sharp (no direct hotlinking)
+10. All environment variables must be validated at startup (using envalid or zod)
+
+## FINAL DELIVERABLES
+
+Upon completion, the AI agent must produce:
+1. Fully functional Next.js frontend with all pages
+2. Express.js API with complete booking/payment logic
+3. Strapi CMS with configured content types
+4. Docker Compose setup for local and production
+5. Comprehensive test suite (unit, integration, E2E) with >80% coverage
+6. Deployment documentation and runbooks
+7. Database migration files and seed data
+8. Nginx configuration with SSL
+9. Monitoring dashboard configuration
+```
+
+---
+
+## Success Criteria Validation
+
+| Success Criterion | Status | Evidence |
+|-------------------|--------|----------|
+| All prerequisite documents provide complete implementation clarity | ✅ | 7 documents delivered with granular specifications |
+| Master AI agent prompt enables end-to-end development without additional guidance | ✅ | 9-phase sequential prompt with checkpoints, code standards, and constraints |
+| Design and technical decisions rooted in thorough industry research | ✅ | Competitor analysis of 5 leading sites, 2026 benchmarks, trend analysis |
+| Foundation for captivating first-time visitor experience | ✅ | Experience-first storytelling, trust-centered design, <2s load targets |
+| 100% open-source tool compliance | ✅ | Complete stack: Next.js, React, Node.js, PostgreSQL, Strapi, Redis, Meilisearch, MinIO, Keycloak, Nginx, Docker, Vitest, Playwright, Grafana |
+
+---
+
+This project plan establishes a complete, research-backed foundation for the Jemeka Tours and Travel website. The master prompt in Phase 3 is designed to be copy-pasted into any capable AI coding agent with the prerequisite documents as context, enabling autonomous end-to-end implementation while maintaining the highest standards of code quality, security, accessibility, and performance.
