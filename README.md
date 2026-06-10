@@ -17,7 +17,8 @@ A modern, full-stack monorepo for a travel and tour company, featuring a Next.js
 ## Tech Stack
 
 - **Frontend**: Next.js, React, Tailwind CSS, Framer Motion, Lucide React.
-- **Backend**: Hono, tRPC, Zod.
+- **Backend**: Hono, tRPC, Zod, Auth.js (NextAuth).
+- **Email**: Resend + React Email (Open Source templates).
 - **Database**: Drizzle ORM, SQLite.
 - **CMS**: Strapi.
 - **Language**: TypeScript.

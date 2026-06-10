@@ -1,6 +1,10 @@
-import { createRouter, publicQuery } from "./middleware";
+import { createRouter, publicQuery, authedQuery } from "./middleware";
 
 export const authRouter = createRouter({
-  // Placeholder — auth will be wired up with NextAuth in a future phase
-  ping: publicQuery.query(() => ({ authenticated: false })),
+  getSession: authedQuery.query(({ ctx }) => {
+    return {
+      user: ctx.user,
+    };
+  }),
+  ping: publicQuery.query(() => ({ ok: true })),
 });

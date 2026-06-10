@@ -1,6 +1,8 @@
 "use client";
 
 import Link from 'next/link';
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 import { trpc } from "@/providers/trpc";
 import { Layout } from "@jemeka/ui/components/Layout";
@@ -32,33 +34,32 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 export default function Admin() {
-  const authLoading = false;
-  // Mocking auth for now
-  const user = { name: "Admin", role: "admin" };
-  const isAdmin = true;
+  const { data: session, status } = useSession();
+  const isAdmin = session?.user && (session.user as any).role === "admin";
+  const user = session?.user;
 
   const { data: bookings, isLoading: bookingsLoading } =
-    trpc.booking.list.useQuery(undefined, { enabled: isAdmin });
+    (trpc as any).booking.list.useQuery(undefined, { enabled: !!isAdmin });
   const { data: enquiries, isLoading: enquiriesLoading } =
-    trpc.enquiry.list.useQuery(undefined, { enabled: isAdmin });
+    (trpc as any).enquiry.list.useQuery(undefined, { enabled: !!isAdmin });
 
-  const utils = trpc.useUtils();
+  const utils = (trpc as any).useUtils();
 
-  const updateBookingStatus = trpc.booking.updateStatus.useMutation({
+  const updateBookingStatus = (trpc as any).booking.updateStatus.useMutation({
     onSuccess: () => {
       utils.booking.list.invalidate();
       toast.success("Booking status updated");
     },
   });
 
-  const updateEnquiryStatus = trpc.enquiry.updateStatus.useMutation({
+  const updateEnquiryStatus = (trpc as any).enquiry.updateStatus.useMutation({
     onSuccess: () => {
       utils.enquiry.list.invalidate();
       toast.success("Enquiry status updated");
     },
   });
 
-  if (authLoading) {
+  if (status === "loading") {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center">
@@ -66,6 +67,10 @@ export default function Admin() {
         </div>
       </Layout>
     );
+  }
+
+  if (!session) {
+    redirect("/login?callbackUrl=/admin");
   }
 
   if (!isAdmin) {
@@ -99,10 +104,10 @@ export default function Admin() {
   const totalBookings = bookings?.length || 0;
   const totalEnquiries = enquiries?.length || 0;
   const pendingBookings =
-    bookings?.filter((b) => b.status === "pending").length || 0;
+    bookings?.filter((b: any) => b.status === "pending").length || 0;
   const totalRevenue = bookings
-    ?.filter((b) => b.status === "confirmed" || b.status === "completed")
-    .reduce((sum, b) => sum + Number(b.totalPrice), 0);
+    ?.filter((b: any) => b.status === "confirmed" || b.status === "completed")
+    .reduce((sum: number, b: any) => sum + Number(b.totalPrice), 0);
 
   const stats = [
     {
@@ -253,7 +258,7 @@ export default function Admin() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {bookings.map((booking) => (
+                          {bookings.map((booking: any) => (
                             <TableRow key={booking.id}>
                               <TableCell className="font-mono text-sm">
                                 {booking.bookingReference}
@@ -396,7 +401,7 @@ export default function Admin() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {enquiries.map((enquiry) => (
+                          {enquiries.map((enquiry: any) => (
                             <TableRow key={enquiry.id}>
                               <TableCell className="font-medium">
                                 {enquiry.name}

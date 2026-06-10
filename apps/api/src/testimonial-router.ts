@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createRouter, publicQuery } from "./middleware";
+import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { testimonials } from "@db/schema";
 import { eq, and, desc } from "drizzle-orm";
@@ -52,5 +52,40 @@ export const testimonialRouter = createRouter({
         isVerified: false,
         isActive: true,
       });
+    }),
+  
+  // Admin only
+  all: adminQuery.query(async () => {
+    const db = getDb();
+    return db.query.testimonials.findMany({
+      orderBy: [desc(testimonials.createdAt)],
+    });
+  }),
+
+  updateStatus: adminQuery
+    .input(
+      z.object({
+        id: z.number(),
+        isVerified: z.boolean().optional(),
+        isActive: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const updates: any = {};
+      if (input.isVerified !== undefined) updates.isVerified = input.isVerified;
+      if (input.isActive !== undefined) updates.isActive = input.isActive;
+      
+      return db
+        .update(testimonials)
+        .set(updates)
+        .where(eq(testimonials.id, input.id));
+    }),
+
+  delete: adminQuery
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      return db.delete(testimonials).where(eq(testimonials.id, input.id));
     }),
 });

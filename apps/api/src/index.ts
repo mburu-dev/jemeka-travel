@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "./router";
 import { createContext } from "./context";
+import { logger } from "./lib/logger";
 
 const app = new Hono();
 
@@ -29,9 +30,9 @@ app.use("/api/trpc/*", async (c) => {
     req: c.req.raw,
     router: appRouter,
     createContext,
-    onError({ error }) {
+    onError({ error, path }) {
       if (error.code === "INTERNAL_SERVER_ERROR") {
-        console.error("tRPC internal error:", error);
+        logger.error({ error, path }, "tRPC internal error");
       }
     },
   });
@@ -40,7 +41,7 @@ app.use("/api/trpc/*", async (c) => {
 app.all("/api/*", (c) => c.json({ error: "Not Found" }, 404));
 
 const port = parseInt(process.env.PORT ?? "4000");
-console.log(`🚀 Jemeka Tours API running on http://localhost:${port}`);
+logger.info(`🚀 Jemeka Tours API running on http://localhost:${port}`);
 
 serve({ fetch: app.fetch, port });
 

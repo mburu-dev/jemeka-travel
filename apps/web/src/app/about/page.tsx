@@ -17,6 +17,7 @@ import {
   HandHeart,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const values = [
   {
@@ -80,10 +81,12 @@ export default function About() {
     <Layout>
       {/* Hero */}
       <section className="relative h-[40vh] min-h-[300px] flex items-center justify-center">
-        <img
+        <Image
           src="/images/about-hero.jpg"
           alt="About Jemeka"
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          className="object-cover"
+          priority
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#264653]/90 to-[#0F4C75]/80" />
         <div className="relative z-10 text-center px-4">

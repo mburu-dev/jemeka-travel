@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -91,10 +92,11 @@ export default function Contact() {
       {/* Header */}
       <section className="relative h-[35vh] min-h-[250px] flex items-center justify-center bg-[#0F4C75]">
         <div className="absolute inset-0 opacity-20">
-          <img
+          <Image
             src="/images/destinations/zanzibar.jpg"
             alt="Contact"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
         </div>
         <div className="relative z-10 text-center px-4">

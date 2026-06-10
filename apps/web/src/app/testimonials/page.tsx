@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export default function Testimonials() {
   const { data: testimonials, isLoading } = trpc.testimonial.list.useQuery({});
@@ -58,10 +59,11 @@ export default function Testimonials() {
       {/* Header */}
       <section className="relative h-[35vh] min-h-[250px] flex items-center justify-center bg-[#264653]">
         <div className="absolute inset-0 opacity-20">
-          <img
+          <Image
             src="/images/packages/kruger-safari.jpg"
             alt="Testimonials"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
         </div>
         <div className="relative z-10 text-center px-4">

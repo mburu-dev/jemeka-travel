@@ -12,7 +12,8 @@
     "dev:api": "npm run dev --workspace=apps/api",
     "dev:cms": "npm run develop --prefix apps/cms",
     "build:web": "npm run build --workspace=apps/web",
-    "build:api": "npm run build --workspace=apps/api"
+    "build:api": "npm run build --workspace=apps/api",
+    "test": "concurrently \"npm run test --workspace=apps/api\" \"npm run test --workspace=apps/web\""
   },
   "devDependencies": {
     "concurrently": "^10.0.3"

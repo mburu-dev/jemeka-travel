@@ -17,6 +17,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
@@ -25,6 +26,18 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@jemeka/api": [
+        "../api/src/index.ts"
+      ],
+      "@jemeka/ui/*": [
+        "../../packages/ui/src/*"
+      ],
+      "@db/schema": [
+        "../../packages/db/src/schema.ts"
+      ],
+      "@db/relations": [
+        "../../packages/db/src/relations.ts"
       ]
     }
   },

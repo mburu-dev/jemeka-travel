@@ -28,16 +28,16 @@ export function Footer() {
               Your adventure begins with us.
             </p>
             <div className="flex items-center gap-4 pt-2">
-              <a href="#" className="text-gray-400 hover:text-[#F4A261] transition-colors">
+              <a href="#" aria-label="Follow us on Facebook" className="text-gray-400 hover:text-[#F4A261] transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#F4A261] transition-colors">
+              <a href="#" aria-label="Follow us on Instagram" className="text-gray-400 hover:text-[#F4A261] transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#F4A261] transition-colors">
+              <a href="#" aria-label="Follow us on Twitter" className="text-gray-400 hover:text-[#F4A261] transition-colors">
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#F4A261] transition-colors">
+              <a href="#" aria-label="Follow us on Youtube" className="text-gray-400 hover:text-[#F4A261] transition-colors">
                 <Youtube className="w-5 h-5" />
               </a>
             </div>
