@@ -150,14 +150,15 @@ export default function About() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative"
+              className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl"
             >
-              <img
+              <Image
                 src="/images/destinations/serengeti.jpg"
                 alt="Safari"
-                className="rounded-2xl shadow-2xl"
+                fill
+                className="object-cover"
               />
-              <div className="absolute -bottom-6 -left-6 bg-[#0F4C75] text-white p-6 rounded-xl shadow-lg">
+              <div className="absolute -bottom-6 -right-6 bg-[#0F4C75] text-white p-6 rounded-xl shadow-lg z-10">
                 <div className="text-3xl font-bold">10+</div>
                 <div className="text-white/80 text-sm">Years of Excellence</div>
               </div>

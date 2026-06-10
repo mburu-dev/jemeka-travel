@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { createRouter, publicQuery, adminQuery } from "./middleware";
-import { getDb } from "./queries/connection";
-import { bookings } from "@db/schema";
+import { getDb, bookings } from "@jemeka/db";
 import { eq, desc } from "drizzle-orm";
 
 function generateBookingRef() {

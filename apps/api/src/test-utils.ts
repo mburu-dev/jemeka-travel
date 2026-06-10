@@ -2,7 +2,7 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import type { AppRouter } from "./router";
 import { appRouter } from "./router";
 import { createContext } from "./context";
-import { getDb } from "./queries/connection";
+import { getDb } from "@jemeka/db";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import path from "path";
 import fs from "fs";

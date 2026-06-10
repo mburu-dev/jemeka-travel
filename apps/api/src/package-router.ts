@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from "./middleware";
-import { getDb } from "./queries/connection";
-import { packages, destinations } from "@db/schema";
+import { getDb, packages, destinations, type Package } from "@jemeka/db";
 import { eq, and, gte, lte } from "drizzle-orm";
 
 export const packageRouter = createRouter({
@@ -45,7 +44,7 @@ export const packageRouter = createRouter({
 
       return db.query.packages.findMany({
         where,
-        orderBy: (packages, { desc }) => [desc(packages.isFeatured), desc(packages.rating)],
+        orderBy: (p: any, { desc }: any) => [desc(p.isFeatured), desc(p.rating)],
       });
     }),
 
@@ -72,7 +71,7 @@ export const packageRouter = createRouter({
     const db = getDb();
     return db.query.packages.findMany({
       where: and(eq(packages.isFeatured, true), eq(packages.isActive, true)),
-      orderBy: (packages, { desc }) => [desc(packages.rating)],
+      orderBy: (p: any, { desc }: any) => [desc(p.rating)],
       limit: 6,
     });
   }),

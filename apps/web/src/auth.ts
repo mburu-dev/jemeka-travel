@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { getDb } from "../../../apps/api/src/queries/connection";
+import { getDb } from "@jemeka/db";
 import Google from "next-auth/providers/google";
 import Resend from "next-auth/providers/resend";
 import { render } from "@react-email/components";

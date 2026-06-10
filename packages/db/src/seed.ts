@@ -1,4 +1,4 @@
-import { getDb } from "../../../apps/api/src/queries/connection";
+import { getDb } from "./index";
 import {
   destinations,
   packages,
@@ -261,7 +261,7 @@ async function seed() {
       category: "wildlife",
       difficulty: "easy",
       isFeatured: true,
-      rating: "4.9",
+      rating: 4.9,
       reviewCount: 124,
     },
     {
@@ -304,7 +304,7 @@ async function seed() {
       category: "wildlife",
       difficulty: "easy",
       isFeatured: true,
-      rating: "4.8",
+      rating: 4.8,
       reviewCount: 96,
     },
     {
@@ -348,7 +348,7 @@ async function seed() {
       category: "beach",
       difficulty: "easy",
       isFeatured: true,
-      rating: "4.7",
+      rating: 4.7,
       reviewCount: 78,
     },
     {
@@ -391,7 +391,7 @@ async function seed() {
       category: "wildlife",
       difficulty: "easy",
       isFeatured: true,
-      rating: "4.9",
+      rating: 4.9,
       reviewCount: 112,
     },
     {
@@ -434,7 +434,7 @@ async function seed() {
       category: "luxury",
       difficulty: "easy",
       isFeatured: true,
-      rating: "4.8",
+      rating: 4.8,
       reviewCount: 89,
     },
     {
@@ -480,7 +480,7 @@ async function seed() {
       category: "wildlife",
       difficulty: "easy",
       isFeatured: true,
-      rating: "4.9",
+      rating: 4.9,
       reviewCount: 45,
     },
     {
@@ -522,7 +522,7 @@ async function seed() {
       category: "adventure",
       difficulty: "moderate",
       isFeatured: false,
-      rating: "4.6",
+      rating: 4.6,
       reviewCount: 54,
     },
     {
@@ -565,7 +565,7 @@ async function seed() {
       category: "cultural",
       difficulty: "easy",
       isFeatured: false,
-      rating: "4.8",
+      rating: 4.8,
       reviewCount: 67,
     },
     {
@@ -608,7 +608,7 @@ async function seed() {
       category: "cultural",
       difficulty: "easy",
       isFeatured: false,
-      rating: "4.5",
+      rating: 4.5,
       reviewCount: 43,
     },
     {
@@ -652,7 +652,7 @@ async function seed() {
       category: "family",
       difficulty: "easy",
       isFeatured: false,
-      rating: "4.7",
+      rating: 4.7,
       reviewCount: 36,
     },
   ];

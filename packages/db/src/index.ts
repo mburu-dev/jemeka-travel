@@ -1,12 +1,11 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
-import path from "path";
-import * as schema from "@db/schema";
-import * as relations from "@db/relations";
+import * as schema from "./schema";
+import * as relations from "./relations";
 
 const fullSchema = { ...schema, ...relations };
 
-let instance: ReturnType<typeof drizzle<typeof fullSchema>>;
+let instance: any;
 
 export function getDb(url?: string) {
   if (!instance || url) {
@@ -16,3 +15,6 @@ export function getDb(url?: string) {
   }
   return instance;
 }
+
+export * from "./schema";
+export * from "./relations";

@@ -2,9 +2,9 @@
   "name": "@jemeka/db",
   "version": "0.0.0",
   "private": true,
-  "main": "src/schema.ts",
+  "main": "src/index.ts",
   "exports": {
-    ".": "./src/schema.ts",
+    ".": "./src/index.ts",
     "./relations": "./src/relations.ts",
     "./seed": "./src/seed.ts"
   },

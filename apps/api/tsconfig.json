@@ -10,6 +10,7 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
+      "@jemeka/db": ["../../packages/db/src/index.ts"],
       "@db/schema": ["../../packages/db/src/schema.ts"],
       "@db/relations": ["../../packages/db/src/relations.ts"],
       "@contracts/constants": ["../../packages/contracts/src/constants.ts"],

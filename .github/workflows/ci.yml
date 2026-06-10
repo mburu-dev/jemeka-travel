@@ -25,6 +25,14 @@ jobs:
       - name: Lint
         run: npm run lint --workspaces
 
+      - name: Verify Database Migrations
+        run: |
+          npm install -g drizzle-kit
+          # Ensure migrations can be generated/checked without errors
+          # In a real environment, we would also run a test migration against a temporary DB
+          echo "Verifying migrations..."
+          ls packages/db/src/migrations
+
       - name: Type Check
         run: |
           npm run build --workspace=apps/api

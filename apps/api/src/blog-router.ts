@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from "./middleware";
-import { getDb } from "./queries/connection";
-import { blogPosts } from "@db/schema";
+import { getDb, blogPosts } from "@jemeka/db";
 import { eq, and, desc } from "drizzle-orm";
 
 export const blogRouter = createRouter({

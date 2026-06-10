@@ -1,5 +1,5 @@
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
-import type { User } from "@db/schema";
+import type { User } from "@jemeka/db";
 
 export type TrpcContext = {
   req: Request;

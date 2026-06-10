@@ -27,6 +27,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@jemeka/db": [
+        "../../packages/db/src/index.ts"
+      ],
       "@jemeka/api": [
         "../api/src/index.ts"
       ],

@@ -36,7 +36,6 @@ import { toast } from "sonner";
 export default function Admin() {
   const { data: session, status } = useSession();
   const isAdmin = session?.user && (session.user as any).role === "admin";
-  const user = session?.user;
 
   const { data: bookings, isLoading: bookingsLoading } =
     (trpc as any).booking.list.useQuery(undefined, { enabled: !!isAdmin });
@@ -60,13 +59,7 @@ export default function Admin() {
   });
 
   if (status === "loading") {
-    return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin w-8 h-8 border-4 border-[#0F4C75] border-t-transparent rounded-full" />
-        </div>
-      </Layout>
-    );
+    return null;
   }
 
   if (!session) {
@@ -164,7 +157,7 @@ export default function Admin() {
                 Admin Dashboard
               </h1>
               <p className="text-white/70 mt-1">
-                Welcome back, {user?.name || "Admin"}
+                Welcome back, {session?.user?.name || "Admin"}
               </p>
             </div>
             <Link href="/">

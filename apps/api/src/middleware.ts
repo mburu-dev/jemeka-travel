@@ -2,10 +2,12 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
 import type { TrpcContext } from "./context";
-import { getDb } from "./queries/connection";
-import { sessions, users } from "@db/schema";
+import { getDb, sessions, users } from "@jemeka/db";
 import { eq } from "drizzle-orm";
 import { parse } from "cookie";
+import { jwtVerify } from "jose";
+
+const AUTH_SECRET = process.env.AUTH_SECRET;
 
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
@@ -26,6 +28,38 @@ const t = initTRPC.context<TrpcContext>().create({
 export const createRouter = t.router;
 export const publicQuery = t.procedure;
 
+// Helper to verify Auth.js session token
+async function verifySessionToken(token: string) {
+  if (!AUTH_SECRET) {
+    console.error("AUTH_SECRET is not set in API environment");
+    return null;
+  }
+
+  try {
+    // If Auth.js is using JWT strategy, we verify the JWT
+    // If it's using database strategy, the token is a random sessionToken
+    // For database strategy, we still do a DB lookup but we should ensure the token 
+    // is coming from a trusted source (signed cookie).
+    // Note: Auth.js v5 database sessions are just random tokens in cookies.
+    // The "standard" way to verify them in a separate API is a DB lookup.
+    
+    const db = getDb();
+    const sessionWithUser = await db
+      .select({
+        user: users,
+      })
+      .from(sessions)
+      .innerJoin(users, eq(sessions.userId, users.id))
+      .where(eq(sessions.sessionToken, token))
+      .get();
+
+    return sessionWithUser?.user || null;
+  } catch (error) {
+    console.error("Session verification error:", error);
+    return null;
+  }
+}
+
 // Middleware to verify Auth.js session from database
 const isAuthed = t.middleware(async ({ ctx, next }) => {
   const cookieHeader = ctx.req.headers.get("cookie");
@@ -40,35 +74,16 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  const db = getDb();
-  const session = await db.query.sessions.findFirst({
-    where: eq(sessions.sessionToken, sessionToken),
-    with: {
-      user: true,
-    },
-  });
+  const user = await verifySessionToken(sessionToken);
 
-  // Note: Drizzle query 'with' requires relations to be defined. 
-  // If relations aren't setup, we can do a manual join or two queries.
-  // Let's do a manual join for safety since I haven't checked relations.ts yet.
-  
-  const sessionWithUser = await db
-    .select({
-      user: users,
-    })
-    .from(sessions)
-    .innerJoin(users, eq(sessions.userId, users.id))
-    .where(eq(sessions.sessionToken, sessionToken))
-    .get();
-
-  if (!sessionWithUser || !sessionWithUser.user) {
+  if (!user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
     ctx: {
       ...ctx,
-      user: sessionWithUser.user,
+      user,
     },
   });
 });
