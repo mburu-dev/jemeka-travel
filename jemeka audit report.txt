@@ -1,0 +1,272 @@
+
+JEMEKA TOURS & TRAVEL
+Comprehensive Codebase Audit Report
+github.com/mburu-dev/jemeka-travel
+Audit Date: June 10, 2026
+Auditor: Claude (Anthropic AI)
+
+Executive Scorecard
+
+Domain	Score	Summary
+Code Quality & Consistency	7 / 10	Good patterns; TypeScript leniency is a risk
+Architecture & System Design	8 / 10	Strong monorepo with clear separation of concerns
+Security Implementation	5 / 10	Critical gaps: public booking, build ignores, CORS
+Performance & Optimization	6 / 10	No caching layer; N+1 patterns; hardcoded timestamps
+Test Coverage & CI/CD	5 / 10	Shallow unit tests; no CI pipeline; build checks disabled
+Maintainability & Documentation	7 / 10	Good ADR and seed data; inline docs sparse
+Accessibility & Compatibility	5 / 10	Missing ARIA, skip links, focus management
+OVERALL	6 / 10	Solid foundation; significant hardening required
+
+Table of Contents
+    • 1.  Repository Overview
+    • 2.  Strengths  — What the codebase does well
+    • 3.  Weaknesses  — Specific, actionable issues
+    • 4.  Gaps vs. Top-Tier Industry Standards  — Distance from best-in-class
+    • 5.  Prioritised Remediation Roadmap  — Ordered action plan
+
+1. Repository Overview
+Jemeka Tours & Travel is a full-stack travel-booking platform implemented as an npm workspaces monorepo. The project targets East African safari tourism and provides a publicly accessible frontend, a tRPC API, an admin dashboard, and a Strapi CMS. The technology footprint is modern and coherent.
+
+Technology Stack
+    • Frontend (apps/web):  Next.js 15 (App Router), TypeScript, Tailwind CSS, shadcn/ui, Framer Motion, tRPC client, Auth.js v5
+    • API (apps/api):  Hono on Node.js, tRPC, Drizzle ORM + libSQL / Turso SQLite, Pino logger, Vitest
+    • CMS (apps/cms):  Strapi 5
+    • Shared packages:  @jemeka/db (Drizzle schema + migrations), @jemeka/ui (Radix UI / shadcn components), @jemeka/config (Tailwind + TS configs), @jemeka/contracts (constants)
+    • Testing:  Vitest (API unit + integration), Playwright (E2E)
+
+File Counts (approximate, excluding node_modules)
+    • TypeScript/TSX source files:  ~55
+    • Test files:  5  (3 Playwright specs + 2 Vitest files)
+    • Migration SQL files:  1
+    • Documentation files:  5 (README, CLAUDE.md, AGENTS.md, ADR, API.md)
+
+2. Strengths
+The following elements meet or exceed typical expectations for a project at this stage of development.
+2.1  Architecture & Monorepo Design
+Turborepo-style npm workspaces monorepo
+The repo uses an npm workspaces monorepo pattern (package.json workspaces: ["apps/web", "apps/api", "packages/*"]), enabling shared code without publishing. The separation into apps/ and packages/ is textbook for scalable TypeScript projects and mirrors widely adopted patterns used by Vercel, Prisma, and Linear.
+Architectural Decision Record
+A formal ADR (docs/adr/0001-monorepo-architecture.md) documents the rationale for the monorepo, stack choices, and trade-offs. Very few projects at this size maintain ADRs; doing so signals engineering maturity and aids future contributors.
+Separation of concerns: tRPC end-to-end type safety
+The decision to run tRPC over a separate Hono API process (rather than bundling API routes inside Next.js) gives clean process isolation and allows independent scaling. The shared AppRouter type exported from apps/api/src/index.ts and consumed in apps/web/src/lib/trpc.ts provides compile-time guarantees across the client–server boundary — a pattern championed by T3 Stack and adopted by high-throughput SaaS companies.
+Next.js App Router best practices
+Server Components fetch data directly via trpcServer (apps/web/src/lib/trpc.ts) and pass it to Client Components as props. This avoids the client waterfall that plagues pages-based React apps. parallel data fetching with Promise.all() in apps/web/src/app/page.tsx is efficient.
+
+2.2  Database & Data Modelling
+Drizzle ORM with type-safe schema
+The schema in packages/db/src/schema.ts is comprehensively modelled: users, sessions, accounts, verificationTokens, authenticators (Auth.js), destinations, packages, bookings, testimonials, enquiries, and blogPosts all carry proper column types, constraints, and enums. Using text("price") for monetary values instead of REAL is the correct choice for decimal precision in SQLite.
+Migration baseline
+A baseline migration (0000_conscious_alice.sql) and journal file exist under packages/db/src/migrations, establishing a reproducible schema evolution path with Drizzle Kit.
+Comprehensive seed data
+packages/db/src/seed.ts seeds 8 destinations, 10 tour packages, and 12 testimonials with realistic, domain-appropriate data. This materially accelerates development and demo workflows.
+
+2.3  Security (Partial Strengths)
+Auth.js v5 with Drizzle adapter
+Authentication uses Auth.js v5 with both Google OAuth and Resend magic-link providers. The DrizzleAdapter correctly persists sessions, accounts, and verificationTokens to the database. The custom session callback in apps/web/src/auth.ts safely surfaces the user role to the session object without leaking sensitive fields.
+API-side session verification
+The isAuthed middleware in apps/api/src/middleware.ts performs a database-side session lookup rather than trusting a client-supplied JWT, which is the correct approach for Auth.js v5 database sessions. This prevents token forgery attacks.
+Role-based access control
+The adminQuery procedure chain (authedQuery.use(isAdmin)) correctly gates all admin mutations and queries behind both authentication and an explicit role === "admin" check. List, updateStatus, and delete operations on bookings and enquiries all require adminQuery.
+Environment variable guard
+apps/api/src/lib/env.ts implements a required() helper that throws in production when a variable is absent. This prevents silent misconfigurations from reaching production with empty strings.
+
+2.4  User Experience & Frontend Quality
+Rich, polished UI
+The frontend demonstrates genuine design craftsmanship: multi-layer gradient hero images, Framer Motion staggered animations (containerVariants / itemVariants), sticky pricing sidebar, Accordion itinerary, and a clear inclusion/exclusion visual comparison. These exceed the typical bootstrap-template quality found in early-stage startups.
+SEO-first metadata
+Every page file (page.tsx) exports either a static metadata object or an async generateMetadata function. Open Graph tags, dynamic titles using the template pattern ("%s | Jemeka Tours and Travel"), and proper description truncation (pkg.description.substring(0, 160)) are all present.
+Sitemap and robots.txt
+apps/web/src/app/sitemap.ts dynamically generates XML sitemaps for all static routes and fetches live destination and package slugs. apps/web/src/app/robots.ts correctly disallows /admin/ and /api/ while pointing to the sitemap. This is production-ready SEO infrastructure.
+Loading skeleton and Sonner toasts
+A global loading.tsx provides an App Router-compatible Suspense fallback. Sonner toast notifications on booking success/failure provide clear user feedback.
+Transactional email
+The magic-link flow uses react-email to render a custom MagicLinkEmail component, which is then sent via Resend. This is a professional email architecture compared to plain-text nodemailer approaches.
+
+2.5  Testing Infrastructure
+Integration test harness
+apps/api/src/test-utils.ts builds a full in-memory test database, runs real Drizzle migrations, and creates a typed tRPC caller. This is a genuine integration test architecture that exercises the entire call stack from procedure to SQLite. Many projects only mock the database layer.
+Playwright E2E specs
+Three Playwright spec files cover the happy-path booking flow, HTML5 email validation, mobile responsiveness on iPhone 13, and navbar stickiness. The booking.spec.ts spec traces the full user journey across multiple pages.
+
+3. Weaknesses
+The following are specific, verifiable flaws with file and line references. Each is an actionable item.
+
+3.1  Security
+CRITICAL — TypeScript and ESLint checks suppressed in production builds
+apps/web/next.config.ts sets both ignoreDuringBuilds: true (ESLint) and ignoreBuildErrors: true (TypeScript). This means the CI/build pipeline provides zero static-analysis safety net. A type error or lint violation that would catch a runtime bug will be silently ignored. This is a well-known anti-pattern explicitly warned against in Next.js documentation.
+// apps/web/next.config.ts
+typescript: { ignoreBuildErrors: true },  // ← disables all TS safety in CI
+eslint:     { ignoreDuringBuilds: true },  // ← disables all ESLint in CI
+
+HIGH — Booking creation endpoint is unauthenticated (IDOR risk)
+apps/api/src/booking-router.ts exposes create and getByReference as publicQuery (no authentication). Any user can submit a booking for any packageId without being logged in, and any user who guesses a booking reference can retrieve the customer PII (name, email, phone, special requests). This violates OWASP A01:2021 (Broken Access Control).
+// apps/api/src/booking-router.ts line 13
+create: publicQuery  // ← should be authedQuery; no auth required to book
+getByReference: publicQuery  // ← exposes customerName, customerEmail, customerPhone
+
+HIGH — No rate limiting or request throttling on any endpoint
+The Hono server in apps/api/src/index.ts does not apply any rate-limiting middleware (e.g., hono/rate-limiter, express-rate-limit, or Cloudflare rate rules). The booking and enquiry endpoints are directly enumerable. An attacker can spam thousands of bookings or contact form submissions, poisoning the admin dashboard and potentially exhausting email quota.
+
+HIGH — CORS origin validation fragile in production
+apps/api/src/index.ts passes process.env.FRONTEND_URL ?? "" as the second allowed origin. If FRONTEND_URL is unset, the fallback is an empty string "", which Hono CORS may interpret as allowing the empty Origin header. In production, CORS should enforce an explicit allowlist, throw if the variable is missing, and should NOT fall back silently.
+// apps/api/src/index.ts
+origin: ["http://localhost:3000", process.env.FRONTEND_URL ?? ""],
+//  ↑ if FRONTEND_URL is unset in prod, this falls back to "" silently
+
+MEDIUM — AUTH_SECRET read directly from process.env without validation in middleware
+apps/api/src/middleware.ts line 10 reads const AUTH_SECRET = process.env.AUTH_SECRET but then passes it to verifySessionToken where, for database sessions, it is never actually used for JWT verification. The imported but unused jwtVerify from jose (visible in the bundled index.ts output) creates confusion about whether token signing is being validated. If the strategy ever shifts to JWT sessions, the secret validation path is incomplete.
+
+MEDIUM — Admin page relies on client-side role check (bypass risk)
+apps/web/src/app/admin/page.tsx is a "use client" component that reads the session via useSession() and then conditionally renders an access-denied UI. This means the page's JavaScript is served to all visitors; only the rendered output is gated. A motivated user can manipulate localStorage or network responses to bypass the rendered block. The correct pattern is to use a Server Component with auth() to redirect at the server/middleware level.
+
+3.2  Code Quality & Correctness
+BUG — Schema createdAt/updatedAt defaults are evaluated once at module load time
+Every table in packages/db/src/schema.ts uses .default(new Date()). In Drizzle ORM, JavaScript default values are evaluated when the module is first imported, not per-row. Every row inserted in the same server process lifetime will receive the same timestamp. The correct approach is .$defaultFn(() => new Date()) or, better, using sql`(unixepoch())` for a server-side SQLite default.
+// packages/db/src/schema.ts (same pattern on 12 columns)
+createdAt: integer('created_at', { mode: 'timestamp' }).default(new Date())
+//  ↑ BUG: new Date() evaluated at module load, not per-insert
+// Fix: .$defaultFn(() => new Date())
+
+BUG — generateBookingRef() is duplicated between router and test file
+The generateBookingRef function is defined identically in apps/api/src/booking-router.ts (line 6) and again from scratch in apps/api/src/booking.test.ts (line 3). The test is testing a local copy of the function, not the production function. If the production implementation changes, the test will pass while the real code behaves differently.
+
+BUG — integration test imports from non-existent path
+apps/api/src/booking.integration.test.ts line 3 imports from "./queries/connection" and line 5 imports from "@db/schema", neither of which exist in the codebase. The actual connection is exposed through @jemeka/db and the schema from @jemeka/db. This integration test would fail to compile.
+import { getDb } from './queries/connection';  // ← path does not exist
+import { destinations, packages, bookings } from '@db/schema';  // ← package not defined
+
+Pervasive use of any type
+16 occurrences of : any in apps/web/src and 9 in apps/api/src were found. Notable examples: PackageDetailClientProps { pkg: any }, bookingMutation = (trpc as any).booking.create.useMutation, and (d: any, { desc }: any) in destination-router.ts. These eliminate the primary benefit of TypeScript and can mask runtime errors.
+
+updatedAt columns are never updated on mutation
+Every table has an updatedAt column but no update mutation in any router sets it. For example, booking-router.ts updateStatus mutation sets only { status, paymentStatus } without touching updatedAt. This means the column is permanently stuck at the module-load timestamp (also affected by the default(new Date()) bug above).
+
+No input sanitisation on free-text fields
+enquiry-router.ts and booking-router.ts accept specialRequests (string), message (string.min(10)), and subject (string) without any XSS sanitisation. While SQLite parameterised queries prevent SQL injection, the raw text is later rendered in the admin dashboard inside <span> and <TableCell> elements. If the admin page ever adds dangerouslySetInnerHTML or an email template renders these fields as HTML, stored XSS becomes possible.
+
+3.3  Performance
+No HTTP caching on server-side tRPC calls
+Every page load triggers fresh tRPC queries to the database without any cache layer. For publicly readable content (destinations, packages) that rarely changes, Next.js fetch caching, unstable_cache, or a Redis/Upstash layer would dramatically reduce database load and Time-to-First-Byte on cold starts.
+
+Seed uses sequential inserts instead of bulk insert
+packages/db/src/seed.ts inserts records one-by-one inside a for loop with onConflictDoNothing(). For 10 packages and 12 testimonials this is acceptable, but it establishes a bad pattern. Drizzle supports .values([...array]) for a single round-trip bulk insert.
+
+next.config.ts has no image domain allowlist
+With no images.remotePatterns or images.domains configured, Next.js Image optimisation is only available for local /public assets. Any destination or package image served from a CDN or Strapi upload URL will either throw an error or require allowlisting. Production images (from Cloudinary, Strapi, or Turso CDN) will break on deployment.
+
+3.4  CI/CD & Build Pipeline
+No CI/CD pipeline exists
+There is no .github/workflows/, .gitlab-ci.yml, or any other CI configuration file in the repository. The project lacks automated test execution on pull requests, build verification, or deployment pipelines. This is a critical gap for any production-bound application.
+
+turbo.json is missing despite the ADR referencing Turborepo
+docs/adr/0001-monorepo-architecture.md states the decision is to use a Turborepo monorepo, but no turbo.json pipeline configuration file exists. Without it, there is no build caching, no parallelism definition, and no topological build ordering. The project loses all the performance benefits of Turborepo.
+
+Root package.json test script uses concurrently without failure propagation
+The root test script runs concurrently \"npm run test --workspace=apps/api\" \"npm run test --workspace=apps/web\". By default, concurrently will not exit with a non-zero code if one process fails but the other succeeds. This means a failing unit test may not block CI.
+
+3.5  Accessibility
+Navbar mobile menu button has no aria-label
+packages/ui/src/components/Navbar.tsx renders a hamburger button for mobile, but the Playwright test at apps/web/tests/ui.spec.ts queries it as button[aria-label="Open menu"], .lucide-menu. If the aria-label is absent, screen reader users hear only a generic "button" with no description. WCAG 2.1 AA Success Criterion 4.1.2 requires accessible names on all interactive controls.
+
+No skip-navigation link
+apps/web/src/app/layout.tsx renders <html><body><TRPCReactProvider>{children}</TRPCReactProvider></body></html> with no skip-to-main-content link. Keyboard users must tab through the entire Navbar on every page before reaching content. This violates WCAG 2.1 SC 2.4.1.
+
+Booking form lacks aria-describedby for error states
+The booking form in apps/web/src/app/packages/[slug]/PackageDetailClient.tsx uses HTML5 required but no aria-describedby associations. When the Zod error formatter returns field-level errors from the API, there is no mechanism to surface them as accessible error messages linked to the relevant inputs.
+
+Images missing meaningful alt text fallback
+Multiple Image components use alt={dest.name} or alt={pkg.title}, which is acceptable, but the hero background image in HomeClient.tsx uses alt="African Safari - Jemeka Tours" which is a generic description. Decorative images that provide no informational value should use alt="" to be ignored by screen readers.
+
+3.6  Maintainability & Dependency Management
+Strapi CMS is not wired into the monorepo workspace
+apps/cms is listed in the root dev script (npm run dev:cms via --prefix apps/cms) but is NOT included in the root package.json workspaces array. It has its own package-lock.json. This means it receives no shared config, no type-checking from the root tsconfig, and its dependencies are not deduplicated. It is effectively a separate, manually managed project embedded in the repo.
+
+kimi/ directory contains unused/experimental code
+apps/api/src/kimi/ contains auth.ts, platform.ts, session.ts, and types.ts that appear to be experimental platform integration code. None of these modules are imported in router.ts or index.ts. Dead code of unknown origin increases cognitive load and build surface area.
+
+Inline style={{ fontFamily: 'var(--font-heading)' }} repeated 15+ times
+Throughout HomeClient.tsx, PackageDetailClient.tsx, DestinationDetailClient.tsx, and admin/page.tsx, the same inline style object is repeated on every heading. This should be a Tailwind CSS custom utility class (font-heading in tailwind.config.js) or a Radix/shadcn variant. Inline styles bypass Tailwind's JIT optimisation and create maintenance fragility.
+
+Hardcoded hex color values in Tailwind classes
+className="bg-[#0F4C75]" appears 40+ times across the codebase. These arbitrary Tailwind values bypass the design token system. If the brand color changes, every file must be updated manually. These should be theme-extended variables in packages/config/tailwind.config.js (e.g., extend.colors.brand.navy = "#0F4C75").
+
+4. Gaps vs. Top-Tier Industry Standards
+This section maps specific codebase characteristics against practices used by leading production applications and widely adopted engineering standards. Each gap is referenced to a well-documented benchmark.
+
+4.1  Security Gaps Table
+Location	Gap vs. Standard	Standard Reference
+booking-router.ts	Unauthenticated booking creation; guest enumeration of bookings by reference	OWASP A01:2021 – Broken Access Control
+api/src/index.ts	No rate limiting on any route; no request-size limits	OWASP A05:2021 – Security Misconfiguration
+next.config.ts	TypeScript and ESLint errors suppressed in build; no static analysis gate	NIST SSDF PW.7 – Review & Test
+admin/page.tsx	Admin access controlled client-side only; no server middleware guard	OWASP A01:2021 – Broken Access Control
+api/src/index.ts	Missing Content-Security-Policy, X-Frame-Options, HSTS headers	OWASP A05:2021; Mozilla Observatory
+enquiry-router.ts	No input sanitisation on free-text fields before DB storage	OWASP A03:2021 – Injection
+middleware.ts	Unused jwtVerify import; AUTH_SECRET loaded but not used for DB sessions	OWASP A02:2021 – Crypto Failures
+
+4.2  Architecture & Scalability Gaps
+No caching strategy vs. Vercel/Next.js reference architecture
+Top-tier Next.js deployments use unstable_cache or React cache() for server-side data, combined with ISR (Incremental Static Regeneration) for content-heavy pages. The jemeka-travel web app re-fetches all destination and package data on every request with no revalidation strategy. The official Next.js docs recommend export const revalidate = 3600 at the page level for semi-static content, reducing database round trips by orders of magnitude.
+
+SQLite not suitable for multi-instance production deployment
+The current DATABASE_URL defaults to file:sqlite.db (a local file). When deployed across multiple serverless function instances (Vercel, Fly.io), each instance will have its own SQLite file and writes will conflict. The ADR mentions Turso (libSQL) as the production target, but the migration path is undocumented and no DATABASE_AUTH_TOKEN environment variable is defined in env.ts. Industry standard for this stack (T3, Drizzle) is to configure Turso explicitly in env.ts and document the migration.
+
+No pagination on list endpoints vs. REST/GraphQL best practices
+booking-router.ts list, enquiry-router.ts list, testimonial-router.ts, and blog-router.ts return all rows without limit/offset or cursor-based pagination. As data grows, a single call could return thousands of rows. GraphQL Relay spec and tRPC documentation both demonstrate cursor-based pagination as the standard for list endpoints.
+
+4.3  Testing & Quality Gaps
+No CI pipeline vs. GitHub Actions standard
+GitHub's own documentation and every major open-source project (Next.js, Prisma, Drizzle) ship with .github/workflows/ YAML pipelines that run lint, type-check, and test on every pull request. The absence of any CI in this repository means no automated quality gate exists. A standard pipeline for this stack would include: npm run lint, tsc --noEmit, vitest run, and playwright test --reporter=github.
+
+Test coverage is narrow vs. 70% line-coverage standard
+Only booking reference generation (3 trivial tests) and the booking creation flow (2 integration tests) are tested. Zero tests cover: destination queries, package queries, enquiry mutations, auth middleware, admin access control, the blog router, or any frontend component. Industry benchmarks (Google Engineering Practices, Atlassian Engineering) target 70-80% line coverage for business-critical paths. The booking flow — which handles customer PII and financial data — has the highest coverage, but RBAC, error branches, and all other routers are untested.
+
+Integration test has broken imports vs. testable architecture
+booking.integration.test.ts imports from "./queries/connection" and "@db/schema" — paths that do not exist. A production-grade test suite would be verified to compile and run in CI on every commit. The fact that broken imports exist undetected confirms the absence of automated test execution.
+
+4.4  Accessibility Gaps vs. WCAG 2.1 AA
+    • Missing skip navigation link  (violates SC 2.4.1 — Bypass Blocks). Industry standard: first focusable element is a visually hidden <a href="#main-content"> that becomes visible on focus.
+    • Keyboard focus management in booking modal  (violates SC 2.4.3 — Focus Order). When the booking form is revealed via setShowBookingForm(true), focus should be programmatically moved to the first form field. It currently remains on the "Book This Tour" button.
+    • Motion not respecting prefers-reduced-motion  (violates SC 2.3.3 — Animation from Interactions). The extensive Framer Motion animations in HomeClient.tsx do not check for window.matchMedia("(prefers-reduced-motion: reduce)"). Accessibility-first libraries like Radix UI respect this by default.
+    • Missing form error announcements  (violates SC 3.3.1 — Error Identification). API validation errors are shown as Sonner toasts, which are not announced to screen readers via aria-live regions by default.
+
+4.5  Operational Readiness Gaps
+    • No health check beyond /health pong  Production applications include structured health checks that verify database connectivity (e.g., SELECT 1), not just process liveness. The current /health endpoint returns { ok: true } regardless of database state.
+    • No structured error tracking  There is no integration with Sentry, Highlight.io, or any error-tracking platform. The onError callback in the tRPC handler logs only INTERNAL_SERVER_ERROR. Industry standard is to capture and alert on all unhandled exceptions with stack traces and request context.
+    • No environment validation at startup  apps/web has no equivalent of the env.ts required() guard. process.env.NEXT_PUBLIC_APP_URL and AUTH_RESEND_KEY are read ad-hoc throughout the codebase without startup validation. T3 Stack's @t3-oss/env-nextjs is the standard solution for this.
+    • Booking confirmation emails not implemented  After a successful booking mutation, no email is sent to the customer. The transactional email infrastructure (Resend + react-email) is already present in the codebase for magic-link; extending it for booking confirmations is a low-effort, high-value gap.
+
+5. Prioritised Remediation Roadmap
+Issues are ordered by risk/impact. Address CRITICAL items before any production deployment.
+
+Phase 1 — Pre-Production Blockers (Week 1–2)
+    • P1.1  Re-enable TypeScript and ESLint in builds.  Remove ignoreBuildErrors and ignoreDuringBuilds from next.config.ts. Fix all resulting type errors, replacing : any with proper interfaces.
+    • P1.2  Add server-side admin guard.  Convert apps/web/src/app/admin/page.tsx to a Server Component. Call auth() at the top; redirect to /login if no session or role !== "admin".
+    • P1.3  Gate booking creation behind authentication.  Change create in booking-router.ts from publicQuery to authedQuery. Associate bookings with ctx.user.id.
+    • P1.4  Fix schema timestamp defaults.  Replace all .default(new Date()) with .$defaultFn(() => new Date()) across packages/db/src/schema.ts.
+    • P1.5  Fix broken integration test imports.  Update booking.integration.test.ts to import from "@jemeka/db" and remove the non-existent ./queries/connection import. Verify test runs with vitest run.
+    • P1.6  Export and deduplicate generateBookingRef.  Move the function to a shared lib file. Import it in both booking-router.ts and booking.test.ts so the test exercises the real production function.
+
+Phase 2 — Security Hardening (Week 2–4)
+    • P2.1  Add rate limiting.  Apply @hono/rate-limiter middleware to /api/trpc/booking.create and /api/trpc/enquiry.create with a sensible window (e.g., 5 requests per 15 minutes per IP).
+    • P2.2  Harden CORS.  Validate FRONTEND_URL via env.ts required() function. Remove the ?? "" fallback.
+    • P2.3  Add security headers.  Configure Hono middleware or a Cloudflare Transform Rule to set Content-Security-Policy, X-Frame-Options: DENY, and Strict-Transport-Security.
+    • P2.4  Paginate list endpoints.  Add cursor z.number().optional() inputs to booking.list, enquiry.list, testimonial.list, and blog.list. Return { items, nextCursor }.
+    • P2.5  Configure next.config.ts image domains.  Add images.remotePatterns for Strapi uploads and any CDN domain.
+
+Phase 3 — Quality & Operations (Week 4–8)
+    • P3.1  Create GitHub Actions CI pipeline.  Add .github/workflows/ci.yml with jobs: lint (eslint), type-check (tsc --noEmit), unit-test (vitest run), e2e-test (playwright test).
+    • P3.2  Add turbo.json.  Define pipeline tasks (build, test, lint) with correct dependencies and caching. This alone can cut CI times by 50-80% on unchanged packages.
+    • P3.3  Extend design tokens.  Add brand colors to packages/config/tailwind.config.js. Replace all bg-[#0F4C75] occurrences with bg-brand-navy. Create a font-heading utility class.
+    • P3.4  Implement booking confirmation email.  Create a BookingConfirmationEmail react-email component. Trigger it in booking-router.ts create mutation after successful DB insert.
+    • P3.5  Add updatedAt trigger.  Set updatedAt: new Date() in every update mutation. Consider a Drizzle trigger or a reusable withTimestamps helper.
+    • P3.6  Add Sentry (or equivalent).  Install @sentry/nextjs and @sentry/node. Integrate with the tRPC onError handler.
+
+Phase 4 — Accessibility & Polish (Week 8–12)
+    • P4.1  Add skip navigation link.  Insert <a href="#main-content" className="sr-only focus:not-sr-only">Skip to content</a> as the first child of <body> in layout.tsx.
+    • P4.2  Respect prefers-reduced-motion.  Wrap all Framer Motion variants in a useReducedMotion() hook. Set duration: 0 and disable stagger when true.
+    • P4.3  Add aria-label to mobile menu button.  Ensure the hamburger button in Navbar.tsx carries aria-label="Open menu" and toggles to aria-label="Close menu" when open.
+    • P4.4  Focus management in booking form.  Use a useRef on the first booking form field and call ref.current?.focus() inside the setShowBookingForm(true) handler.
+    • P4.5  Integrate apps/cms into workspaces.  Add "apps/cms" to the root package.json workspaces array. Add a turbo pipeline task for it. Unify tsconfig extends.
+
+End of Report
+This report was generated by automated static analysis of the repository at github.com/mburu-dev/jemeka-travel on June 10, 2026. All findings are supported by specific file and line references included in the body of the report. No claims are extrapolated beyond what is directly observable in the codebase.

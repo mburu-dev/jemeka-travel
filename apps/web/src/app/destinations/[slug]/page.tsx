@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from "next/navigation";
 
 import { trpcServer } from "@/lib/trpc";
-import { Layout } from "@jemeka/ui/components/Layout";
+import { AppLayout as Layout } from "@/components/AppLayout";
 import { Button } from "@jemeka/ui/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import DestinationDetailClient from "./DestinationDetailClient";

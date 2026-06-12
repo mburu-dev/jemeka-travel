@@ -21,7 +21,6 @@ export const destinationRouter = createRouter({
       if (input?.featured !== undefined) {
         conditions.push(eq(destinations.isFeatured, input.featured));
       }
-      conditions.push(eq(destinations.isActive, true));
 
       const where = conditions.length > 0 ? and(...conditions) : undefined;
 
@@ -66,7 +65,7 @@ export const destinationRouter = createRouter({
   featured: publicQuery.query(async () => {
     const db = getDb();
     return db.query.destinations.findMany({
-      where: and(eq(destinations.isFeatured, true), eq(destinations.isActive, true)),
+      where: eq(destinations.isFeatured, true),
       orderBy: (d: any, { asc }: any) => [asc(d.name)],
     });
   }),

@@ -98,8 +98,8 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#2A9D8F] mt-0.5 shrink-0" />
                 <span className="text-gray-300 text-sm">
-                  123 Safari Road, Arusha,<br />
-                  Tanzania, East Africa
+                  PXH3+P46, Utawala, Mihango,<br />
+                  Nairobi, Kenya. P.O. Box 46376-00100
                 </span>
               </li>
               <li className="flex items-center gap-3">
@@ -123,13 +123,13 @@ export function Footer() {
               &copy; {new Date().getFullYear()} Jemeka Tours & Travel. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <Link href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+              <Link href="/privacy-policy" className="text-gray-400 hover:text-white text-sm transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+              <Link href="/terms-of-service" className="text-gray-400 hover:text-white text-sm transition-colors">
                 Terms of Service
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+              <Link href="/cookie-policy" className="text-gray-400 hover:text-white text-sm transition-colors">
                 Cookie Policy
               </Link>
             </div>

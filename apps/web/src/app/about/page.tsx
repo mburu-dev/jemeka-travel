@@ -1,6 +1,6 @@
 "use client";
 
-import { Layout } from "@jemeka/ui/components/Layout";
+import { AppLayout as Layout } from "@/components/AppLayout";
 import { Card, CardContent } from "@jemeka/ui/components/ui/card";
 import { Button } from "@jemeka/ui/components/ui/button";
 import Link from 'next/link';

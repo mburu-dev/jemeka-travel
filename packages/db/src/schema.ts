@@ -18,8 +18,8 @@ export const users = sqliteTable("users", {
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
   role: text("role", { enum: ["user", "admin"] }).default("user").notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" }).default(new Date()).notNull(),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).default(new Date()).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
 export const accounts = sqliteTable(
@@ -109,8 +109,8 @@ export const destinations = sqliteTable("destinations", {
   activities: text("activities", { mode: "json" }).$type<string[]>(),
   isFeatured: integer("is_featured", { mode: "boolean" }).default(false),
   isActive: integer("is_active", { mode: "boolean" }).default(true),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(new Date()).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).default(new Date()).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
 export type Destination = typeof destinations.$inferSelect;
@@ -151,8 +151,8 @@ export const packages = sqliteTable("packages", {
   isActive: integer("is_active", { mode: "boolean" }).default(true),
   rating: real("rating").default(0),
   reviewCount: integer("review_count").default(0),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(new Date()).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).default(new Date()).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
 export type Package = typeof packages.$inferSelect;
@@ -170,12 +170,13 @@ export const bookings = sqliteTable("bookings", {
   totalPrice: text("total_price").notNull(),
   status: text("status", { enum: ["pending", "confirmed", "cancelled", "completed"] }).default("pending"),
   paymentStatus: text("payment_status", { enum: ["pending", "partial", "paid", "refunded"] }).default("pending"),
+  transactionId: text("transaction_id"),
   specialRequests: text("special_requests"),
   customerName: text("customer_name").notNull(),
   customerEmail: text("customer_email").notNull(),
   customerPhone: text("customer_phone"),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(new Date()).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).default(new Date()).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
 export type Booking = typeof bookings.$inferSelect;
@@ -193,7 +194,7 @@ export const testimonials = sqliteTable("testimonials", {
   destination: text("destination"),
   isVerified: integer("is_verified", { mode: "boolean" }).default(false),
   isActive: integer("is_active", { mode: "boolean" }).default(true),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(new Date()).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
 export type Testimonial = typeof testimonials.$inferSelect;
@@ -209,7 +210,7 @@ export const enquiries = sqliteTable("enquiries", {
   message: text("message").notNull(),
   destinationInterest: text("destination_interest"),
   status: text("status", { enum: ["new", "read", "responded", "closed"] }).default("new"),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(new Date()).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
 export type Enquiry = typeof enquiries.$inferSelect;
@@ -227,8 +228,8 @@ export const blogPosts = sqliteTable("blog_posts", {
   tags: text("tags", { mode: "json" }).$type<string[]>(),
   featuredImage: text("featured_image"),
   isPublished: integer("is_published", { mode: "boolean" }).default(false),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(new Date()).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).default(new Date()).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
 export type BlogPost = typeof blogPosts.$inferSelect;

@@ -1,11 +1,5 @@
 import { describe, it, expect } from 'vitest';
-
-function generateBookingRef() {
-  const prefix = "JMK";
-  const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substring(2, 5).toUpperCase();
-  return `${prefix}-${timestamp}${random}`;
-}
+import { generateBookingRef } from './booking-router';
 
 describe('Booking Reference Generation', () => {
   it('should generate a reference with JMK prefix', () => {

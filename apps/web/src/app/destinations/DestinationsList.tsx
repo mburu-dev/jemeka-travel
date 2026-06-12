@@ -24,7 +24,7 @@ export default function DestinationsList({ destinations }: DestinationsListProps
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
-          className="group relative h-96 overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500"
+          className={`group relative h-96 overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 ${!dest.isActive ? 'grayscale opacity-80' : ''}`}
         >
           <Image
             src={dest.image || "/images/destinations/serengeti.jpg"}
@@ -34,11 +34,16 @@ export default function DestinationsList({ destinations }: DestinationsListProps
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
-          {/* Region Badge */}
-          <div className="absolute top-4 left-4">
-            <Badge className="bg-white/20 backdrop-blur-md text-white border-white/30 uppercase tracking-wider text-[10px]">
+          {/* Region Badge & Coming Soon */}
+          <div className="absolute top-4 left-4 flex flex-col gap-2">
+            <Badge className="bg-white/20 backdrop-blur-md text-white border-white/30 uppercase tracking-wider text-[10px] w-fit">
               {dest.region}
             </Badge>
+            {!dest.isActive && (
+              <Badge className="bg-amber-500/90 backdrop-blur-md text-white uppercase tracking-wider text-[10px] w-fit">
+                Coming Soon
+              </Badge>
+            )}
           </div>
 
           {/* Content */}
@@ -56,12 +61,19 @@ export default function DestinationsList({ destinations }: DestinationsListProps
             <p className="text-white/70 text-sm line-clamp-2 mb-4 leading-relaxed">
               {dest.shortDescription || dest.description}
             </p>
-            <Link href={`/destinations/${dest.slug}`}>
-              <span className="inline-flex items-center gap-2 text-white font-medium group-hover:gap-3 transition-all">
+            {dest.isActive ? (
+              <Link href={`/destinations/${dest.slug}`}>
+                <span className="inline-flex items-center gap-2 text-white font-medium group-hover:gap-3 transition-all">
+                  Explore Destination
+                  <ChevronRight className="w-4 h-4 text-[#F4A261]" />
+                </span>
+              </Link>
+            ) : (
+              <span className="inline-flex items-center gap-2 text-white/50 font-medium cursor-not-allowed">
                 Explore Destination
-                <ChevronRight className="w-4 h-4 text-[#F4A261]" />
+                <ChevronRight className="w-4 h-4 text-white/30" />
               </span>
-            </Link>
+            )}
           </div>
         </motion.div>
       ))}

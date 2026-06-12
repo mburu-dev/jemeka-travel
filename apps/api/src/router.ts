@@ -5,6 +5,7 @@ import { testimonialRouter } from "./testimonial-router";
 import { enquiryRouter } from "./enquiry-router";
 import { bookingRouter } from "./booking-router";
 import { blogRouter } from "./blog-router";
+import { searchRouter } from "./search-router";
 import { createRouter, publicQuery } from "./middleware";
 
 export const appRouter = createRouter({
@@ -16,6 +17,7 @@ export const appRouter = createRouter({
   enquiry: enquiryRouter,
   booking: bookingRouter,
   blog: blogRouter,
+  search: searchRouter,
 });
 
 export type AppRouter = typeof appRouter;

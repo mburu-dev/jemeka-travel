@@ -27,6 +27,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@payload-config": [
+        "./payload.config.ts"
+      ],
       "@jemeka/db": [
         "../../packages/db/src/index.ts"
       ],

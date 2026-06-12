@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { trpc } from "@/providers/trpc";
-import { Layout } from "@jemeka/ui/components/Layout";
+import { AppLayout as Layout } from "@/components/AppLayout";
 import { Button } from "@jemeka/ui/components/ui/button";
 import { Input } from "@jemeka/ui/components/ui/input";
 import { Label } from "@jemeka/ui/components/ui/label";

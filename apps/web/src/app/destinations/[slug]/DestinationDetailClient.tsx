@@ -49,6 +49,11 @@ export default function DestinationDetailClient({ destination }: DestinationDeta
               <Badge className="bg-white/20 text-white ml-2">
                 {destination.region}
               </Badge>
+              {!destination.isActive && (
+                <Badge className="bg-amber-500 text-white ml-2">
+                  Coming Soon
+                </Badge>
+              )}
             </div>
             <h1
               className="text-3xl sm:text-5xl font-bold text-white"
@@ -152,10 +157,17 @@ export default function DestinationDetailClient({ destination }: DestinationDeta
                     Available Tour Packages
                   </h2>
                   <div className="space-y-4">
-                    {destination.packages.map((pkg: any) => (
-                      <Link key={pkg.id} href={`/packages/${pkg.slug}`}>
-                        <Card className="group hover:shadow-lg transition-all cursor-pointer border-0 shadow">
-                          <CardContent className="p-4 flex items-center gap-4">
+                    {destination.packages.map((pkg: any) => {
+                      const PackageCard = (
+                        <Card className={`group hover:shadow-lg transition-all border-0 shadow ${!pkg.isActive ? 'grayscale opacity-80' : 'cursor-pointer'}`}>
+                          <CardContent className="p-4 flex items-center gap-4 relative">
+                            {!pkg.isActive && (
+                              <div className="absolute top-2 right-2 z-10">
+                                <Badge className="bg-amber-500 text-white text-[10px] uppercase tracking-wider">
+                                  Coming Soon
+                                </Badge>
+                              </div>
+                            )}
                             <div className="relative w-24 h-24 rounded-lg overflow-hidden shrink-0">
                               <Image
                                 src={pkg.image || "/images/packages/serengeti-classic.jpg"}
@@ -188,11 +200,25 @@ export default function DestinationDetailClient({ destination }: DestinationDeta
                                 </div>
                               </div>
                             </div>
-                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#0F4C75] group-hover:translate-x-1 transition-all shrink-0" />
+                            {pkg.isActive ? (
+                              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#0F4C75] group-hover:translate-x-1 transition-all shrink-0" />
+                            ) : (
+                              <ChevronRight className="w-5 h-5 text-gray-300 shrink-0" />
+                            )}
                           </CardContent>
                         </Card>
-                      </Link>
-                    ))}
+                      );
+                      
+                      return pkg.isActive ? (
+                        <Link key={pkg.id} href={`/packages/${pkg.slug}`}>
+                          {PackageCard}
+                        </Link>
+                      ) : (
+                        <div key={pkg.id} className="cursor-not-allowed">
+                          {PackageCard}
+                        </div>
+                      );
+                    })}
                   </div>
                 </motion.div>
               )}

@@ -38,7 +38,6 @@ export const packageRouter = createRouter({
       if (input?.featured !== undefined) {
         conditions.push(eq(packages.isFeatured, input.featured));
       }
-      conditions.push(eq(packages.isActive, true));
 
       const where = conditions.length > 0 ? and(...conditions) : undefined;
 
@@ -70,7 +69,7 @@ export const packageRouter = createRouter({
   featured: publicQuery.query(async () => {
     const db = getDb();
     return db.query.packages.findMany({
-      where: and(eq(packages.isFeatured, true), eq(packages.isActive, true)),
+      where: eq(packages.isFeatured, true),
       orderBy: (p: any, { desc }: any) => [desc(p.rating)],
       limit: 6,
     });

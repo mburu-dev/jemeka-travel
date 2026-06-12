@@ -1,12 +1,14 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { setupTestDb, testCaller } from './test-utils';
-import { getDb } from './queries/connection';
-import { destinations, packages, bookings } from '@db/schema';
+import { setupTestDb, createAuthenticatedTestCaller } from './test-utils';
+import { getDb } from '@jemeka/db';
+import { destinations, packages, bookings, users } from '@jemeka/db';
 import { eq } from 'drizzle-orm';
 
 describe('Booking Router Integration', () => {
   let db: any;
   let testPackageId: number;
+  let testUser: any;
+  let authenticatedCaller: any;
 
   beforeAll(async () => {
     db = await setupTestDb();
@@ -32,7 +34,15 @@ describe('Booking Router Integration', () => {
       category: "adventure",
     }).returning();
 
+    // Seed a test user
+    [testUser] = await db.insert(users).values({
+      name: "Test User",
+      email: "test@example.com",
+      role: "user",
+    }).returning();
+
     testPackageId = pkg.id;
+    authenticatedCaller = await createAuthenticatedTestCaller(testUser);
   });
 
   it('should create a new booking', async () => {
@@ -48,7 +58,7 @@ describe('Booking Router Integration', () => {
       specialRequests: "Window seat please",
     };
 
-    const result = await testCaller.booking.create(bookingData);
+    const result = await authenticatedCaller.booking.create(bookingData);
     
     expect(result).toBeDefined();
     
@@ -61,6 +71,7 @@ describe('Booking Router Integration', () => {
     expect(bookingInDb.customerName).toBe("John Doe");
     expect(bookingInDb.bookingReference).toMatch(/^JMK-/);
     expect(bookingInDb.status).toBe("pending");
+    expect(bookingInDb.userId).toBe(testUser.id);
   });
 
   it('should fetch a booking by reference', async () => {
@@ -73,14 +84,14 @@ describe('Booking Router Integration', () => {
       customerEmail: "jane@example.com",
     };
 
-    const created = await testCaller.booking.create(bookingData);
+    await authenticatedCaller.booking.create(bookingData);
     
     // Get the reference from DB since create doesn't return the full object in current impl
     const bookingInDb = await db.query.bookings.findFirst({
       where: eq(bookings.customerEmail, "jane@example.com"),
     });
 
-    const result = await testCaller.booking.getByReference({ 
+    const result = await authenticatedCaller.booking.getByReference({ 
       reference: bookingInDb.bookingReference 
     });
 

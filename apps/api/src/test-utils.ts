@@ -1,8 +1,8 @@
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import type { AppRouter } from "./router";
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { getDb } from "@jemeka/db";
+import type { User } from "@jemeka/db";
+import type { TrpcContext } from "./context";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import path from "path";
 import fs from "fs";
@@ -25,9 +25,22 @@ export async function setupTestDb() {
   return db;
 }
 
-export function createTestContext() {
+export async function createTestContext(user?: User): Promise<TrpcContext> {
   const req = new Request("http://localhost:4000/api/trpc");
-  return createContext({ req, resHeaders: new Headers() });
+  const baseCtx = await createContext({ 
+    req, 
+    resHeaders: new Headers(),
+    info: {} as any
+  });
+  return { ...baseCtx, user };
 }
 
-export const testCaller = appRouter.createCaller(createTestContext());
+export async function createAuthenticatedTestCaller(user: User) {
+  const ctx = await createTestContext(user);
+  return appRouter.createCaller(ctx);
+}
+
+export async function createTestCaller() {
+  const ctx = await createTestContext();
+  return appRouter.createCaller(ctx);
+}

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -25,7 +27,7 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function Navbar() {
+export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   // Mock auth state for marketing site
@@ -122,6 +124,8 @@ export function Navbar() {
               </Link>
             )}
           </div>
+
+          {searchBar}
 
           {/* Auth Buttons / User */}
           <div className="hidden lg:flex items-center gap-3">

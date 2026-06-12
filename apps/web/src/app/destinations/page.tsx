@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Suspense } from "react";
 
 import { trpcServer } from "@/lib/trpc";
-import { Layout } from "@jemeka/ui/components/Layout";
+import { AppLayout as Layout } from "@/components/AppLayout";
 import DestinationsFilter from "./DestinationsFilter";
 import DestinationsList from "./DestinationsList";
 

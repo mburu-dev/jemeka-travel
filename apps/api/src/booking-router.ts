@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { createRouter, publicQuery, adminQuery } from "./middleware";
+import { createRouter, publicQuery, authedQuery, adminQuery } from "./middleware";
 import { getDb, bookings } from "@jemeka/db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 
-function generateBookingRef() {
+export function generateBookingRef() {
   const prefix = "JMK";
   const timestamp = Date.now().toString(36).toUpperCase();
   const random = Math.random().toString(36).substring(2, 5).toUpperCase();
@@ -11,7 +11,7 @@ function generateBookingRef() {
 }
 
 export const bookingRouter = createRouter({
-  create: publicQuery
+  create: authedQuery
     .input(
       z.object({
         packageId: z.number(),
@@ -25,12 +25,13 @@ export const bookingRouter = createRouter({
         specialRequests: z.string().optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = getDb();
       const bookingReference = generateBookingRef();
       
       return db.insert(bookings).values({
         packageId: input.packageId,
+        userId: ctx.user.id,
         travelDate: new Date(input.travelDate),
         adults: input.adults,
         children: input.children,
@@ -45,12 +46,17 @@ export const bookingRouter = createRouter({
       });
     }),
 
-  getByReference: publicQuery
+  getByReference: authedQuery
     .input(z.object({ reference: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const db = getDb();
+      const isAdmin = ctx.user.role === "admin";
+      
       return db.query.bookings.findFirst({
-        where: eq(bookings.bookingReference, input.reference),
+        where: and(
+          eq(bookings.bookingReference, input.reference),
+          isAdmin ? undefined : eq(bookings.userId, ctx.user.id)
+        ),
       });
     }),
 

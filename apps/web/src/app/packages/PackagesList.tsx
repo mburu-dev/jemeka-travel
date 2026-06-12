@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion } from "framer-motion";
 import { Star, Clock, Users, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@jemeka/ui/components/ui/card";
+import { Badge } from "@jemeka/ui/components/ui/badge";
 
 interface PackagesListProps {
   packages: any[];
@@ -25,8 +26,12 @@ export default function PackagesList({ packages }: PackagesListProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
         >
-          <Link href={`/packages/${pkg.slug}`}>
-            <Card className="group overflow-hidden cursor-pointer border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 rounded-2xl">
+          {pkg.isActive ? (
+            <Link href={`/packages/${pkg.slug}`}>
+              <Card className="group overflow-hidden cursor-pointer border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 rounded-2xl relative">
+                {!pkg.isActive && (
+                  <div className="absolute inset-0 bg-black/10 z-20 pointer-events-none" />
+                )}
               <div className="relative h-64 overflow-hidden">
                 <Image
                   src={pkg.image || "/images/packages/serengeti-classic.jpg"}
@@ -34,10 +39,17 @@ export default function PackagesList({ packages }: PackagesListProps) {
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
-                  <span className="text-[#0F4C75] font-bold text-sm">
-                    from ${Number(pkg.price).toLocaleString()}
-                  </span>
+                <div className="absolute top-4 right-4 flex flex-col gap-2 z-30">
+                  <div className="bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
+                    <span className="text-[#0F4C75] font-bold text-sm">
+                      from ${Number(pkg.price).toLocaleString()}
+                    </span>
+                  </div>
+                  {!pkg.isActive && (
+                    <Badge className="bg-amber-500 text-white uppercase tracking-wider text-[10px] w-fit shadow-lg self-end">
+                      Coming Soon
+                    </Badge>
+                  )}
                 </div>
                 <div className="absolute bottom-4 left-4 flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-full">
                   <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
@@ -84,6 +96,73 @@ export default function PackagesList({ packages }: PackagesListProps) {
               </CardContent>
             </Card>
           </Link>
+          ) : (
+            <div className="cursor-not-allowed">
+              <Card className="group overflow-hidden border-0 shadow-lg transition-all duration-500 rounded-2xl grayscale opacity-80 relative">
+                <div className="absolute inset-0 bg-black/10 z-20 pointer-events-none" />
+                <div className="relative h-64 overflow-hidden">
+                  <Image
+                    src={pkg.image || "/images/packages/serengeti-classic.jpg"}
+                    alt={pkg.title}
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute top-4 right-4 flex flex-col gap-2 z-30">
+                    <div className="bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
+                      <span className="text-[#0F4C75] font-bold text-sm">
+                        from ${Number(pkg.price).toLocaleString()}
+                      </span>
+                    </div>
+                    <Badge className="bg-amber-500 text-white uppercase tracking-wider text-[10px] w-fit shadow-lg self-end">
+                      Coming Soon
+                    </Badge>
+                  </div>
+                  <div className="absolute bottom-4 left-4 flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-full z-30">
+                    <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                    <span className="text-white text-xs font-semibold">
+                      {pkg.rating}
+                    </span>
+                    <span className="text-white/60 text-xs">
+                      ({pkg.reviewCount})
+                    </span>
+                  </div>
+                </div>
+                <CardContent className="p-6 relative z-30">
+                  <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      {pkg.duration} Days
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Users className="w-3.5 h-3.5" />
+                      Max {pkg.maxGroupSize}
+                    </span>
+                  </div>
+                  <h3
+                    className="text-lg font-bold text-[#264653] mb-2"
+                    style={{ fontFamily: 'var(--font-heading)' }}
+                  >
+                    {pkg.title}
+                  </h3>
+                  <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">
+                    {pkg.shortDescription}
+                  </p>
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <span className="text-[#F4A261] font-bold text-lg">
+                      ${Number(pkg.price).toLocaleString()}
+                      <span className="text-gray-400 font-normal text-xs ml-1">
+                        / person
+                      </span>
+                    </span>
+                    <span className="text-gray-400 text-sm font-medium flex items-center gap-1 transition-all">
+                      View Details
+                      <ChevronRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </motion.div>
       ))}
     </motion.div>

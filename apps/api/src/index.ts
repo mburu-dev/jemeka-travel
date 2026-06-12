@@ -7,21 +7,56 @@ import { appRouter } from "./router";
 import { createContext } from "./context";
 import { logger } from "./lib/logger";
 
+import { env } from "./lib/env";
+import { rateLimiter } from "hono-rate-limiter";
+
 const app = new Hono();
 
-// CORS — allow the Next.js frontend on port 3000
+const allowedOrigins = ["http://localhost:3000"];
+if (env.frontendUrl) {
+  allowedOrigins.push(env.frontendUrl);
+}
+
+// CORS — allow the Next.js frontend
 app.use(
   "/api/trpc/*",
   cors({
-    origin: ["http://localhost:3000", process.env.FRONTEND_URL ?? ""],
+    origin: allowedOrigins,
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "OPTIONS"],
     credentials: true,
   })
 );
 
+// Rate limiter for specific endpoints (booking.create, enquiry.create)
+// Applying it generally to the trpc route with a sensible limit.
+app.use(
+  "/api/trpc/booking.create",
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 5, 
+    standardHeaders: "draft-6",
+    keyGenerator: (c) => c.req.header("x-forwarded-for") || c.req.header("true-client-ip") || "anonymous",
+  })
+);
+
+app.use(
+  "/api/trpc/enquiry.create",
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 5,
+    standardHeaders: "draft-6",
+    keyGenerator: (c) => c.req.header("x-forwarded-for") || c.req.header("true-client-ip") || "anonymous",
+  })
+);
+
+import paystackWebhook from "./webhooks/paystack";
+
 // Health check
 app.get("/health", (c) => c.json({ ok: true, ts: Date.now() }));
+
+// Webhooks
+app.route("/api/webhooks/paystack", paystackWebhook);
 
 // tRPC handler
 app.use("/api/trpc/*", async (c) => {

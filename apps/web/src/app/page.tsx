@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { trpcServer } from "@/lib/trpc";
-import { Layout } from "@jemeka/ui/components/Layout";
+import { AppLayout as Layout } from "@/components/AppLayout";
 import HomeClient from "./HomeClient";
 
 export const metadata: Metadata = {

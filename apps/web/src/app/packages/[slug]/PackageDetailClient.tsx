@@ -27,7 +27,7 @@ import {
   AccordionTrigger,
 } from "@jemeka/ui/components/ui/accordion";
 import Image from "next/image";
-import { trpc } from "@/providers/trpc";
+import { CheckoutButton } from "@/components/CheckoutButton";
 
 interface PackageDetailClientProps {
   pkg: any;
@@ -45,47 +45,6 @@ export default function PackageDetailClient({ pkg }: PackageDetailClientProps) {
     customerPhone: "",
     specialRequests: "",
   });
-
-  const bookingMutation = (trpc as any).booking.create.useMutation({
-    onSuccess: () => {
-      toast.success("Booking submitted successfully! We will contact you soon.");
-      setShowBookingForm(false);
-      setFormData({
-        travelDate: "",
-        adults: 1,
-        children: 0,
-        customerName: "",
-        customerEmail: "",
-        customerPhone: "",
-        specialRequests: "",
-      });
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to submit booking");
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!pkg) return;
-
-    const totalPrice = (
-      Number(pkg.price) * formData.adults +
-      Number(pkg.price) * 0.5 * formData.children
-    ).toFixed(2);
-
-    bookingMutation.mutate({
-      packageId: pkg.id,
-      travelDate: formData.travelDate,
-      adults: formData.adults,
-      children: formData.children,
-      totalPrice,
-      customerName: formData.customerName,
-      customerEmail: formData.customerEmail,
-      customerPhone: formData.customerPhone || undefined,
-      specialRequests: formData.specialRequests || undefined,
-    });
-  };
 
   const calculateTotal = () => {
     if (!pkg) return 0;
@@ -117,6 +76,11 @@ export default function PackageDetailClient({ pkg }: PackageDetailClientProps) {
               <Badge className="bg-[#F4A261] text-white">
                 {pkg.category}
               </Badge>
+              {!pkg.isActive && (
+                <Badge className="bg-amber-500 text-white ml-2">
+                  Coming Soon
+                </Badge>
+              )}
               <span className="flex items-center gap-1 text-white">
                 <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                 {pkg.rating} ({pkg.reviewCount} reviews)
@@ -269,7 +233,19 @@ export default function PackageDetailClient({ pkg }: PackageDetailClientProps) {
                 </div>
 
                 <CardContent className="p-6">
-                  {!showBookingForm ? (
+                  {!pkg.isActive ? (
+                    <div className="space-y-4 text-center py-4">
+                      <div className="bg-amber-50 text-amber-800 p-4 rounded-lg">
+                        <h3 className="font-bold mb-2">Currently Unavailable</h3>
+                        <p className="text-sm">This package is coming soon. Please check back later or contact us for more information.</p>
+                      </div>
+                      <Link href="/contact" className="block">
+                        <Button variant="outline" className="w-full h-12 border-[#0F4C75] text-[#0F4C75]">
+                          Ask a Question
+                        </Button>
+                      </Link>
+                    </div>
+                  ) : !showBookingForm ? (
                     <div className="space-y-4">
                       <div className="flex items-center justify-between text-sm text-gray-600 pb-4 border-bottom border-gray-100">
                         <span>Deposit required</span>
@@ -290,7 +266,7 @@ export default function PackageDetailClient({ pkg }: PackageDetailClientProps) {
                       </Link>
                     </div>
                   ) : (
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-4">
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-bold text-[#264653]">Booking Details</h3>
                         <Button
@@ -374,14 +350,18 @@ export default function PackageDetailClient({ pkg }: PackageDetailClientProps) {
                         </div>
                       </div>
 
-                      <Button
-                        type="submit"
-                        disabled={bookingMutation.isPending}
-                        className="w-full bg-[#0F4C75] hover:bg-[#1B262C] text-white font-bold h-12"
-                      >
-                        {bookingMutation.isPending ? "Submitting..." : "Confirm Booking"}
-                      </Button>
-                    </form>
+                      <CheckoutButton
+                        packageId={pkg.id}
+                        travelDate={formData.travelDate}
+                        adults={formData.adults}
+                        children={formData.children}
+                        totalPrice={calculateTotal().toFixed(2)}
+                        customerName={formData.customerName}
+                        customerEmail={formData.customerEmail}
+                        customerPhone={formData.customerPhone}
+                        specialRequests={formData.specialRequests}
+                      />
+                    </div>
                   )}
                 </CardContent>
               </Card>

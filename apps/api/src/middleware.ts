@@ -2,12 +2,11 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
 import type { TrpcContext } from "./context";
-import { getDb, sessions, users } from "@jemeka/db";
+import { getDb } from "@jemeka/db";
+import { sessions, users } from "@db/schema";
 import { eq } from "drizzle-orm";
 import { parse } from "cookie";
-import { jwtVerify } from "jose";
-
-const AUTH_SECRET = process.env.AUTH_SECRET;
+import { env } from "./lib/env";
 
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
@@ -18,7 +17,6 @@ const t = initTRPC.context<TrpcContext>().create({
         ...shape.data,
         zodError:
           error.cause instanceof z.ZodError ? error.cause.flatten() : null,
-        // Add a custom error code if needed
         customCode: error.code,
       },
     };
@@ -28,21 +26,9 @@ const t = initTRPC.context<TrpcContext>().create({
 export const createRouter = t.router;
 export const publicQuery = t.procedure;
 
-// Helper to verify Auth.js session token
+// Helper to verify Auth.js session token from database
 async function verifySessionToken(token: string) {
-  if (!AUTH_SECRET) {
-    console.error("AUTH_SECRET is not set in API environment");
-    return null;
-  }
-
   try {
-    // If Auth.js is using JWT strategy, we verify the JWT
-    // If it's using database strategy, the token is a random sessionToken
-    // For database strategy, we still do a DB lookup but we should ensure the token 
-    // is coming from a trusted source (signed cookie).
-    // Note: Auth.js v5 database sessions are just random tokens in cookies.
-    // The "standard" way to verify them in a separate API is a DB lookup.
-    
     const db = getDb();
     const sessionWithUser = await db
       .select({
