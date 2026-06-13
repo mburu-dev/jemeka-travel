@@ -1,6 +1,7 @@
 {
   "name": "jemeka-travel",
   "private": true,
+  "packageManager": "npm@10.8.2",
   "workspaces": [
     "apps/web",
     "apps/api",
@@ -16,9 +17,5 @@
   },
   "devDependencies": {
     "concurrently": "^10.0.3"
-  },
-  "dependencies": {
-    "docx": "^9.7.1",
-    "pptxgenjs": "^4.0.1"
   }
 }

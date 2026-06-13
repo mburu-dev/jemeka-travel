@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description: "Explore our curated tour packages. From luxury safaris to beach retreats, find the perfect itinerary for your African adventure.",
 };
 
+// Cache this page for 1 hour — reduces DB load on Oracle Free Tier
+export const revalidate = 3600;
+
 interface PageProps {
   searchParams: Promise<{
     category?: string;

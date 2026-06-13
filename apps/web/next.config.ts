@@ -12,17 +12,21 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'www.google.com',
+        hostname: '**.googleapis.com',
       },
       {
-        // OCI Object Storage CDN — production media assets
         protocol: 'https',
-        hostname: 'assets.jemekatours.com',
+        hostname: 'lh3.googleusercontent.com',
       },
       {
-        // OCI Container Registry — future use
+        // Production CDN / OCI Object Storage media assets
         protocol: 'https',
-        hostname: '**.ocir.io',
+        hostname: 'assets.jemekatoursandtravel.com',
+      },
+      {
+        // OCI Object Storage direct endpoint
+        protocol: 'https',
+        hostname: '**.objectstorage.**.oci.customer-oci.com',
       },
     ],
   },

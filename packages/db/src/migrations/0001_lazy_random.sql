@@ -39,7 +39,7 @@ CREATE TABLE `__new_bookings` (
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-INSERT INTO `__new_bookings`("id", "user_id", "package_id", "booking_reference", "travel_date", "adults", "children", "total_price", "status", "payment_status", "transaction_id", "special_requests", "customer_name", "customer_email", "customer_phone", "created_at", "updated_at") SELECT "id", "user_id", "package_id", "booking_reference", "travel_date", "adults", "children", "total_price", "status", "payment_status", "transaction_id", "special_requests", "customer_name", "customer_email", "customer_phone", "created_at", "updated_at" FROM `bookings`;--> statement-breakpoint
+INSERT INTO `__new_bookings`("id", "user_id", "package_id", "booking_reference", "travel_date", "adults", "children", "total_price", "status", "payment_status", "transaction_id", "special_requests", "customer_name", "customer_email", "customer_phone", "created_at", "updated_at") SELECT "id", "user_id", "package_id", "booking_reference", "travel_date", "adults", "children", "total_price", "status", "payment_status", NULL, "special_requests", "customer_name", "customer_email", "customer_phone", "created_at", "updated_at" FROM `bookings`;--> statement-breakpoint
 DROP TABLE `bookings`;--> statement-breakpoint
 ALTER TABLE `__new_bookings` RENAME TO `bookings`;--> statement-breakpoint
 CREATE UNIQUE INDEX `bookings_booking_reference_unique` ON `bookings` (`booking_reference`);--> statement-breakpoint
@@ -68,7 +68,7 @@ CREATE TABLE `__new_destinations` (
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
-INSERT INTO `__new_destinations`("id", "name", "slug", "country", "region", "description", "short_description", "highlights", "best_time_to_visit", "image", "gallery", "coordinates", "activities", "experience_categories", "wildlife", "duration_recommendations", "video_experience_url", "destination_testimonials", "is_featured", "is_active", "created_at", "updated_at") SELECT "id", "name", "slug", "country", "region", "description", "short_description", "highlights", "best_time_to_visit", "image", "gallery", "coordinates", "activities", "experience_categories", "wildlife", "duration_recommendations", "video_experience_url", "destination_testimonials", "is_featured", "is_active", "created_at", "updated_at" FROM `destinations`;--> statement-breakpoint
+INSERT INTO `__new_destinations`("id", "name", "slug", "country", "region", "description", "short_description", "highlights", "best_time_to_visit", "image", "gallery", "coordinates", "activities", "experience_categories", "wildlife", "duration_recommendations", "video_experience_url", "destination_testimonials", "is_featured", "is_active", "created_at", "updated_at") SELECT "id", "name", "slug", "country", "region", "description", NULL, NULL, NULL, "image", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "is_featured", "is_active", "created_at", "updated_at" FROM `destinations`;--> statement-breakpoint
 DROP TABLE `destinations`;--> statement-breakpoint
 ALTER TABLE `__new_destinations` RENAME TO `destinations`;--> statement-breakpoint
 CREATE UNIQUE INDEX `destinations_slug_unique` ON `destinations` (`slug`);--> statement-breakpoint

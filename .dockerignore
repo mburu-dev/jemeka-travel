@@ -1,0 +1,39 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+**/.next
+**/dist
+**/build
+
+# Dev & test files
+**/.env
+**/.env.local
+**/.env.development
+apps/web/test.db
+apps/api/test.db
+test.db
+
+# Version control
+.git
+.gitignore
+.github
+
+# Editor / OS
+.vscode
+.DS_Store
+Thumbs.db
+
+# Docs and scripts
+docs
+scripts
+README.md
+*.txt
+*.md
+
+# Turbo cache
+.turbo
+
+# Kiro
+.kiro

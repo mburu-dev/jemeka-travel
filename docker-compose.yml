@@ -5,15 +5,30 @@ services:
       dockerfile: apps/web/Dockerfile
     container_name: jemeka-web
     restart: unless-stopped
-    ports:
-      # Local port mapping for testing without Cloudflare Tunnel
-      # In production, Cloudflare connects directly to this container via Docker network
-      - "3000:3000"
+    expose:
+      - "3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://api.jemekatoursandtravel.com}
+      - NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=${NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-https://jemekatoursandtravel.com}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: "1536M"
     depends_on:
-      - api
+      api:
+        condition: service_healthy
 
   api:
     build:
@@ -21,19 +36,30 @@ services:
       dockerfile: apps/api/Dockerfile
     container_name: jemeka-api
     restart: unless-stopped
-    ports:
-      - "4000:4000"
+    expose:
+      - "4000"
     volumes:
       - jemeka_data:/data/db
     environment:
       - NODE_ENV=production
       - DB_FILE=file:/data/db/sqlite.db
-      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+      - FRONTEND_URL=${FRONTEND_URL:-https://jemekatoursandtravel.com}
       - JWT_SECRET=${JWT_SECRET}
       - PAYSTACK_SECRET_KEY=${PAYSTACK_SECRET_KEY}
       - RESEND_API_KEY=${RESEND_API_KEY}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: "2048M"
 
   cloudflared:
     image: cloudflare/cloudflared:latest

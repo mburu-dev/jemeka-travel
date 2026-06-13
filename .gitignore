@@ -43,8 +43,11 @@ apps/cms/.tmp
 *.sqlite
 sqlite.db
 
+# Test artifacts
+test.db
+
+# Scripts archive (one-off scripts, not needed in production)
+# scripts/archive/ intentionally kept in repo for reference
+
 # Misc
 *.tgz
-port-pages.js
-fix-imports.js
-replace_fonts.js

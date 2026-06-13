@@ -3,7 +3,7 @@ import superjson from "superjson";
 import { z } from "zod";
 import type { TrpcContext } from "./context";
 import { getDb } from "@jemeka/db";
-import { sessions, users } from "@db/schema";
+import { sessions, users } from "@jemeka/db";
 import { eq } from "drizzle-orm";
 import { parse } from "cookie";
 import { env } from "./lib/env";

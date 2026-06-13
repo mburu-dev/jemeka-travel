@@ -2,15 +2,24 @@ import "dotenv/config";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { secureHeaders } from "hono/secure-headers";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { logger } from "./lib/logger";
-
+import { getDb } from "@jemeka/db";
+import { sql } from "drizzle-orm";
 import { env } from "./lib/env";
 import { rateLimiter } from "hono-rate-limiter";
 
 const app = new Hono();
+
+// Security headers on all routes
+app.use("*", secureHeaders({
+  xFrameOptions: "DENY",
+  xContentTypeOptions: "nosniff",
+  referrerPolicy: "strict-origin-when-cross-origin",
+}));
 
 const allowedOrigins = ["http://localhost:3000"];
 if (env.frontendUrl) {
@@ -52,8 +61,17 @@ app.use(
 
 import paystackWebhook from "./webhooks/paystack";
 
-// Health check
-app.get("/health", (c) => c.json({ ok: true, ts: Date.now() }));
+// Health check — verifies DB connectivity
+app.get("/health", async (c) => {
+  try {
+    const db = getDb();
+    await db.run(sql`SELECT 1`);
+    return c.json({ ok: true, db: "connected", ts: Date.now() });
+  } catch (e) {
+    logger.error({ error: e }, "Health check DB probe failed");
+    return c.json({ ok: false, db: "disconnected", ts: Date.now() }, 503);
+  }
+});
 
 // Webhooks
 app.route("/api/webhooks/paystack", paystackWebhook);

@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   description: "Discover breathtaking destinations across Africa and beyond. From the Serengeti to Zanzibar, find your next adventure.",
 };
 
+// Cache this page for 1 hour; Cloudflare CDN will also cache the static output
+export const revalidate = 3600;
+
 interface PageProps {
   searchParams: Promise<{ region?: string; experience?: string }>;
 }

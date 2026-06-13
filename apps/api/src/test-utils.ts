@@ -1,6 +1,7 @@
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { getDb } from "@jemeka/db";
+import { sessions } from "@jemeka/db";
 import type { User } from "@jemeka/db";
 import type { TrpcContext } from "./context";
 import { migrate } from "drizzle-orm/libsql/migrator";
@@ -27,6 +28,18 @@ export async function setupTestDb() {
 
 export async function createTestContext(user?: User): Promise<TrpcContext> {
   const req = new Request("http://localhost:4000/api/trpc");
+  
+  if (user) {
+    const db = getDb("file:test.db");
+    const token = "test-token-" + Math.random().toString(36).substring(7);
+    await db.insert(sessions).values({
+      sessionToken: token,
+      userId: user.id,
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+    });
+    req.headers.set("cookie", `authjs.session-token=${token}`);
+  }
+
   const baseCtx = await createContext({ 
     req, 
     resHeaders: new Headers(),
