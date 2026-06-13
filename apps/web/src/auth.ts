@@ -8,7 +8,9 @@ import MagicLinkEmail from "./emails/MagicLinkEmail";
 import React from "react";
 import { Resend } from "resend";
 
-const resendClient = new Resend(process.env.AUTH_RESEND_KEY);
+const resendClient = process.env.AUTH_RESEND_KEY 
+  ? new Resend(process.env.AUTH_RESEND_KEY) 
+  : null;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(getDb(), {
@@ -22,6 +24,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ResendProvider({
       from: "Jemeka Tours <onboarding@resend.dev>", // Replace with your domain in production
       async sendVerificationRequest({ identifier, url, provider }) {
+        if (!resendClient) {
+          throw new Error("AUTH_RESEND_KEY is not configured.");
+        }
         const html = await render(React.createElement(MagicLinkEmail, { url }));
         
         const result = await resendClient.emails.send({
@@ -41,7 +46,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
-        // @ts-ignore
+        // @ts-expect-error role is added
         session.user.role = user.role || "user";
       }
       return session;
