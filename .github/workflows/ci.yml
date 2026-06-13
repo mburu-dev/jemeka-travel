@@ -62,3 +62,4 @@ jobs:
           NEXTAUTH_URL: https://jemekatoursandtravel.com
           NEXTAUTH_SECRET: ci-placeholder-secret
           AUTH_SECRET: ci-placeholder-secret
+          AUTH_RESEND_KEY: re_123456789012345678901234567890123
