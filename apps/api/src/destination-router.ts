@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { createRouter, publicQuery } from "./middleware";
 import { getDb, destinations, packages } from "@jemeka/db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, like } from "drizzle-orm";
 
 export const destinationRouter = createRouter({
   list: publicQuery
     .input(
       z.object({
         region: z.string().optional(),
+        experience: z.string().optional(),
         featured: z.boolean().optional(),
       }).optional()
     )
@@ -17,6 +18,9 @@ export const destinationRouter = createRouter({
 
       if (input?.region) {
         conditions.push(eq(destinations.region, input.region as "africa" | "europe" | "asia" | "americas" | "oceania"));
+      }
+      if (input?.experience) {
+        conditions.push(like(destinations.experienceCategories, `%"${input.experience}"%`));
       }
       if (input?.featured !== undefined) {
         conditions.push(eq(destinations.isFeatured, input.featured));

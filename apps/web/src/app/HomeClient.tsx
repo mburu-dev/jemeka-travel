@@ -3,6 +3,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { ImageRotator } from '@/components/ImageRotator';
+import { getGallery } from '@/lib/destinationGalleries';
+import { HeroSlideshow } from '@jemeka/ui/components/HeroSlideshow';
 import { Button } from "@jemeka/ui/components/ui/button";
 import { Card, CardContent } from "@jemeka/ui/components/ui/card";
 import {
@@ -19,6 +22,7 @@ import {
   Check,
   Globe,
   Award,
+  Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -51,23 +55,16 @@ export default function HomeClient({ destinations, packages }: HomeClientProps) 
   return (
     <>
       {/* ===== HERO SECTION ===== */}
-      <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <Image
-            src="/hero-home.jpg"
-            alt="African Safari - Jemeka Tours"
-            fill
-            priority
-            className="object-cover"
-          />
-          {/* Multi-layer gradient overlay for depth */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/25 to-black/80" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
-        </div>
+      <section className="relative h-[calc(100vh-4rem)] lg:h-[calc(100vh-5rem)] min-h-[600px] flex items-center justify-center overflow-hidden">
+        {/* Slideshow Background */}
+        <HeroSlideshow totalSlides={38} />
+
+        {/* Multi-layer gradient overlay for depth — sits above slideshow, below content */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/25 to-black/80 pointer-events-none" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/30 to-transparent pointer-events-none" />
 
         {/* Hero Content */}
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
+        <div className="relative z-20 text-center px-4 max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -117,7 +114,7 @@ export default function HomeClient({ destinations, packages }: HomeClientProps) 
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white/50 text-white hover:bg-white/10 backdrop-blur-sm px-10 py-7 text-lg font-semibold rounded-full transition-all duration-300 hover:border-white"
+                  className="bg-transparent border-white text-white hover:bg-white hover:text-[#264653] backdrop-blur-sm px-10 py-7 text-lg font-semibold rounded-full transition-all duration-300"
                 >
                   View Destinations
                 </Button>
@@ -128,7 +125,7 @@ export default function HomeClient({ destinations, packages }: HomeClientProps) 
 
         {/* Animated scroll indicator */}
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          className="absolute bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
         >
@@ -276,63 +273,111 @@ export default function HomeClient({ destinations, packages }: HomeClientProps) 
           >
             {packages.length === 0 ? (
               <div className="col-span-3 text-center py-12 text-gray-500">No featured packages found.</div>
-            ) : packages.map((pkg) => (
-              <motion.div key={pkg.id} variants={itemVariants}>
-                <Link href={`/packages/${pkg.slug}`}>
-                  <Card className="group overflow-hidden cursor-pointer border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 rounded-2xl">
-                    <div className="relative h-56 overflow-hidden">
-                      <Image
-                        src={pkg.image || "/serengeti.jpg"}
-                        alt={pkg.title}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                      {/* Price badge */}
-                      <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
-                        <span className="text-[#0F4C75] font-bold text-sm">from ${Number(pkg.price).toLocaleString()}</span>
-                      </div>
-                      {/* Rating */}
-                      <div className="absolute bottom-4 left-4 flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-full">
-                        <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                        <span className="text-white text-xs font-semibold">{pkg.rating}</span>
-                        <span className="text-white/60 text-xs">({pkg.reviewCount})</span>
-                      </div>
+            ) : packages.map((pkg) => {
+              const CROSS_BORDER_SLUGS = [
+                "serengeti-national-park",
+                "serengeti-classic-safari",
+                "zanzibar",
+                "zanzibar-beach-paradise",
+                "kruger-national-park",
+                "kruger-big-five-safari",
+                "victoria-falls",
+                "victoria-falls-adventure",
+                "cape-town",
+                "cape-town-winelands",
+                "marrakech",
+                "moroccan-culture-cuisine",
+                "santorini",
+                "santorini-island-escape",
+                "east-african-safari-circuit"
+              ];
+              const isComingSoon = CROSS_BORDER_SLUGS.includes(pkg.slug);
+
+              if (isComingSoon) {
+                return (
+                  <motion.div key={pkg.id} variants={itemVariants}>
+                    <div className="cursor-default">
+                      <Card className="group overflow-hidden border-0 shadow-lg transition-all duration-500 rounded-2xl relative">
+                        <div className="absolute inset-0 bg-black/5 z-20 pointer-events-none rounded-2xl" />
+                        <div className="relative h-56 overflow-hidden">
+                          <ImageRotator images={getGallery(pkg.slug, pkg.image)} alt={pkg.title} subtleMotion={true} />
+                          <div className="absolute inset-0 z-30 flex items-start justify-end p-4 pointer-events-none">
+                            <div className="flex flex-col items-end gap-2">
+                              <div className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1.5 rounded-full shadow-lg">
+                                <Sparkles className="w-3 h-3" />
+                                <span className="text-xs font-bold uppercase tracking-wider">Coming Soon</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="absolute bottom-10 left-4 flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-full z-30">
+                            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                            <span className="text-white text-xs font-semibold">{pkg.rating}</span>
+                            <span className="text-white/60 text-xs">({pkg.reviewCount})</span>
+                          </div>
+                        </div>
+                        <CardContent className="p-6 relative z-30">
+                          <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
+                            <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{pkg.duration} Days</span>
+                            <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" />Max {pkg.maxGroupSize}</span>
+                          </div>
+                          <h3 className="text-lg font-bold text-[#264653] mb-2 line-clamp-1" style={{ fontFamily: 'var(--font-heading)' }}>
+                            {pkg.title}
+                          </h3>
+                          <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">{pkg.shortDescription}</p>
+                          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                            <div className="flex-1"></div>
+                            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full">
+                              <Sparkles className="w-3 h-3" />
+                              Coming Soon
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
                     </div>
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          {pkg.duration} Days
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3.5 h-3.5" />
-                          Max {pkg.maxGroupSize}
-                        </span>
+                  </motion.div>
+                );
+              }
+
+              return (
+                <motion.div key={pkg.id} variants={itemVariants}>
+                  <Link href={`/packages/${pkg.slug}`}>
+                    <Card className="group overflow-hidden cursor-pointer border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 rounded-2xl">
+                      <div className="relative h-56 overflow-hidden">
+                        <ImageRotator images={getGallery(pkg.slug, pkg.image)} alt={pkg.title} />
+                        <div className="absolute top-4 right-4 z-30 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
+                          <span className="text-[#0F4C75] font-bold text-sm">from ${Number(pkg.price).toLocaleString()}</span>
+                        </div>
+                        <div className="absolute bottom-10 left-4 flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-full z-30">
+                          <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                          <span className="text-white text-xs font-semibold">{pkg.rating}</span>
+                          <span className="text-white/60 text-xs">({pkg.reviewCount})</span>
+                        </div>
                       </div>
-                      <h3
-                        className="text-lg font-bold text-[#264653] mb-2 group-hover:text-[#0F4C75] transition-colors line-clamp-1"
-                        style={{ fontFamily: 'var(--font-heading)'  }}
-                      >
-                        {pkg.title}
-                      </h3>
-                      <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">
-                        {pkg.shortDescription}
-                      </p>
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                        <span className="text-[#F4A261] font-bold text-lg">
-                          ${Number(pkg.price).toLocaleString()}
-                          <span className="text-gray-400 font-normal text-xs ml-1">/ person</span>
-                        </span>
-                        <span className="text-[#0F4C75] text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                          View Details
-                          <ChevronRight className="w-4 h-4" />
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
+                          <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{pkg.duration} Days</span>
+                          <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" />Max {pkg.maxGroupSize}</span>
+                        </div>
+                        <h3 className="text-lg font-bold text-[#264653] mb-2 group-hover:text-[#0F4C75] transition-colors line-clamp-1" style={{ fontFamily: 'var(--font-heading)' }}>
+                          {pkg.title}
+                        </h3>
+                        <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">{pkg.shortDescription}</p>
+                        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                          <span className="text-[#F4A261] font-bold text-lg">
+                            ${Number(pkg.price).toLocaleString()}
+                            <span className="text-gray-400 font-normal text-xs ml-1">/ person</span>
+                          </span>
+                          <span className="text-[#0F4C75] text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                            View Details
+                            <ChevronRight className="w-4 h-4" />
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </motion.div>
 
           <div className="text-center mt-12">
@@ -532,7 +577,7 @@ export default function HomeClient({ destinations, packages }: HomeClientProps) 
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white/50 text-white hover:bg-white/10 backdrop-blur-sm px-10 py-7 text-lg font-semibold rounded-full hover:border-white transition-all duration-300"
+                  className="bg-transparent border-white text-white hover:bg-white hover:text-[#264653] backdrop-blur-sm px-10 py-7 text-lg font-semibold rounded-full transition-all duration-300"
                 >
                   Browse Packages
                 </Button>

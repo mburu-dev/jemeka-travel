@@ -22,6 +22,7 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/destinations", label: "Destinations" },
   { href: "/packages", label: "Tour Packages" },
+  { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/testimonials", label: "Testimonials" },
   { href: "/contact", label: "Contact" },
@@ -39,7 +40,7 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 10);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -52,35 +53,29 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/95 backdrop-blur-md shadow-lg"
-          : "bg-transparent"
+      className={`sticky top-0 z-50 bg-white transition-all duration-300 ${
+        scrolled ? "shadow-md" : "border-b border-gray-100"
       }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <Compass
-              className={`w-8 h-8 transition-colors ${
-                scrolled ? "text-[#0F4C75]" : "text-white"
-              } group-hover:text-[#F4A261]`}
-            />
-            <div className="flex flex-col">
-              <span
-                className={`text-xl font-bold tracking-tight transition-colors ${
-                  scrolled ? "text-[#0F4C75]" : "text-white"
-                }`}
-                style={{ fontFamily: 'var(--font-heading)'  }}
+          {/* Logo & Brand Name */}
+          <Link href="/" className="flex items-center gap-3 group shrink-0">
+            <div className="relative h-14 w-16 sm:w-20 transition-transform duration-300 group-hover:scale-105">
+              <img 
+                src="/logo-optimized.png" 
+                alt="Jemeka Tours & Travel Logo" 
+                className="object-contain w-full h-full"
+              />
+            </div>
+            <div className="hidden sm:flex flex-col justify-center">
+              <span 
+                className="text-[#264653] font-bold text-xl sm:text-2xl leading-none tracking-tight" 
+                style={{ fontFamily: 'var(--font-heading)' }}
               >
-                Jemeka
+                JEMEKA
               </span>
-              <span
-                className={`text-[10px] uppercase tracking-[0.2em] -mt-1 transition-colors ${
-                  scrolled ? "text-[#2A9D8F]" : "text-white/80"
-                }`}
-              >
+              <span className="text-[#F4A261] font-semibold text-[10px] sm:text-xs tracking-[0.2em] uppercase mt-0.5">
                 Tours & Travel
               </span>
             </div>
@@ -92,63 +87,60 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                className={`relative px-4 py-2 rounded-md text-sm font-medium transition-colors group ${
                   isActive(link.href)
-                    ? scrolled
-                      ? "text-[#0F4C75] bg-[#0F4C75]/10"
-                      : "text-white bg-white/20"
-                    : scrolled
-                    ? "text-gray-700 hover:text-[#0F4C75] hover:bg-gray-100"
-                    : "text-white/90 hover:text-white hover:bg-white/10"
+                    ? "text-[#0F4C75] bg-[#0F4C75]/5"
+                    : "text-gray-600 hover:text-[#0F4C75] hover:bg-gray-50"
                 }`}
               >
                 {link.label}
+                {/* Modern subtle bottom border indicator on hover/active */}
+                <span 
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 rounded-t-full transition-all duration-300 bg-[#F4A261] ${
+                    isActive(link.href) ? "w-1/2" : "w-0 group-hover:w-1/2"
+                  }`} 
+                />
               </Link>
             ))}
 
             {isAdmin && (
               <Link
                 href="/admin"
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-1 ${
+                className={`relative px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 group ${
                   isActive("/admin")
-                    ? scrolled
-                      ? "text-[#0F4C75] bg-[#0F4C75]/10"
-                      : "text-white bg-white/20"
-                    : scrolled
-                    ? "text-gray-700 hover:text-[#0F4C75] hover:bg-gray-100"
-                    : "text-white/90 hover:text-white hover:bg-white/10"
+                    ? "text-[#0F4C75] bg-[#0F4C75]/5"
+                    : "text-gray-600 hover:text-[#0F4C75] hover:bg-gray-50"
                 }`}
               >
                 <Shield className="w-4 h-4" />
                 Admin
+                <span 
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 rounded-t-full transition-all duration-300 bg-[#F4A261] ${
+                    isActive("/admin") ? "w-1/2" : "w-0 group-hover:w-1/2"
+                  }`} 
+                />
               </Link>
             )}
           </div>
 
-          {searchBar}
+          <div className="flex-1 flex justify-end lg:justify-center px-4 max-w-sm ml-auto lg:ml-0">
+             {searchBar}
+          </div>
 
           {/* Auth Buttons / User */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
             {isLoading ? (
-              <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
+              <div className="w-8 h-8 rounded-full bg-gray-100 animate-pulse" />
             ) : isAuthenticated ? (
               <div className="flex items-center gap-3">
-                <span
-                  className={`text-sm font-medium ${
-                    scrolled ? "text-gray-700" : "text-white"
-                  }`}
-                >
+                <span className="text-sm font-medium text-gray-700">
                   {user?.name || "User"}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={logout}
-                  className={`${
-                    scrolled
-                      ? "border-[#0F4C75] text-[#0F4C75] hover:bg-[#0F4C75] hover:text-white"
-                      : "border-white text-white hover:bg-white hover:text-[#0F4C75]"
-                  }`}
+                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-red-600 transition-colors"
                 >
                   <LogOut className="w-4 h-4 mr-1" />
                   Logout
@@ -156,13 +148,7 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
               </div>
             ) : (
               <Link href="/login">
-                <Button
-                  className={`${
-                    scrolled
-                      ? "bg-[#0F4C75] hover:bg-[#0a3a5a] text-white"
-                      : "bg-white text-[#0F4C75] hover:bg-white/90"
-                  }`}
-                >
+                <Button className="bg-[#F4A261] hover:bg-[#e08c4f] text-white rounded-full px-6 shadow-sm shadow-orange-200 transition-all hover:-translate-y-0.5">
                   <User className="w-4 h-4 mr-1" />
                   Sign In
                 </Button>
@@ -172,25 +158,23 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
 
           {/* Mobile Menu */}
           <Sheet>
-            <SheetTrigger asChild className="lg:hidden">
+            <SheetTrigger asChild className="lg:hidden ml-2 shrink-0">
               <Button
                 variant="ghost"
                 size="icon"
-                className={scrolled ? "text-[#0F4C75]" : "text-white"}
+                className="text-gray-600 hover:bg-gray-100"
               >
                 <Menu className="w-6 h-6" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-80 bg-white">
               <div className="flex flex-col gap-6 mt-8">
-                <Link href="/" className="flex items-center gap-2 mb-4">
-                  <Compass className="w-8 h-8 text-[#0F4C75]" />
-                  <span
-                    className="text-xl font-bold text-[#0F4C75]"
-                    style={{ fontFamily: 'var(--font-heading)'  }}
-                  >
-                    Jemeka
-                  </span>
+                <Link href="/" className="flex items-center mb-4 w-40">
+                  <img 
+                    src="/logo-optimized.png" 
+                    alt="Jemeka Tours & Travel" 
+                    className="object-contain w-full h-auto"
+                  />
                 </Link>
 
                 {navLinks.map((link) => (
@@ -199,8 +183,8 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
                       href={link.href}
                       className={`text-lg font-medium py-2 px-3 rounded-md transition-colors ${
                         isActive(link.href)
-                          ? "text-[#0F4C75] bg-[#0F4C75]/10"
-                          : "text-gray-700 hover:text-[#0F4C75] hover:bg-gray-50"
+                          ? "text-[#0F4C75] bg-[#0F4C75]/5 border-l-4 border-[#F4A261]"
+                          : "text-gray-600 hover:text-[#0F4C75] hover:bg-gray-50 border-l-4 border-transparent"
                       }`}
                     >
                       {link.label}
@@ -212,7 +196,7 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
                   <SheetClose asChild>
                     <Link
                       href="/admin"
-                      className="text-lg font-medium py-2 px-3 rounded-md text-gray-700 hover:text-[#0F4C75] hover:bg-gray-50 flex items-center gap-2"
+                      className="text-lg font-medium py-2 px-3 rounded-md text-gray-600 hover:text-[#0F4C75] hover:bg-gray-50 flex items-center gap-2 border-l-4 border-transparent"
                     >
                       <Shield className="w-5 h-5" />
                       Admin Dashboard
@@ -220,7 +204,7 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
                   </SheetClose>
                 )}
 
-                <div className="border-t pt-4 mt-4">
+                <div className="border-t border-gray-100 pt-4 mt-4">
                   {isAuthenticated ? (
                     <div className="flex flex-col gap-3">
                       <span className="text-sm text-gray-500 px-3">
@@ -229,7 +213,7 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
                       <Button
                         variant="outline"
                         onClick={logout}
-                        className="w-full border-[#0F4C75] text-[#0F4C75]"
+                        className="w-full border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-red-600"
                       >
                         <LogOut className="w-4 h-4 mr-2" />
                         Logout
@@ -238,7 +222,7 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
                   ) : (
                     <SheetClose asChild>
                       <Link href="/login" className="w-full">
-                        <Button className="w-full bg-[#0F4C75] hover:bg-[#0a3a5a]">
+                        <Button className="w-full bg-[#F4A261] hover:bg-[#e08c4f] text-white rounded-full">
                           Sign In
                         </Button>
                       </Link>

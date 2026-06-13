@@ -23,13 +23,29 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       };
     }
 
+    // Generate rich description
+    const rawDescription = destination.shortDescription || destination.description;
+    const baseDescription = rawDescription.length > 160 ? rawDescription.substring(0, 157) + "..." : rawDescription;
+    
+    // Gather images
+    const images = [];
+    if (destination.gallery && destination.gallery.length > 0) {
+      images.push(...destination.gallery.map((url: string) => ({ url })));
+    } else if (destination.image) {
+      images.push({ url: destination.image });
+    } else {
+      images.push({ url: "/images/destinations/serengeti.jpg" }); // Fallback
+    }
+
     return {
-      title: `${destination.name} | Destinations | Jemeka Tours`,
-      description: destination.shortDescription || destination.description.substring(0, 160),
+      title: `${destination.name} Safari & Tours | Jemeka Tours`,
+      description: baseDescription,
+      keywords: `safari, tours, ${destination.name}, ${destination.country}, ${destination.region}, travel, Jemeka Tours, ${destination.highlights?.slice(0, 3).join(', ') || ''}`,
       openGraph: {
-        title: `${destination.name} | Jemeka Tours`,
-        description: destination.shortDescription || destination.description.substring(0, 160),
-        images: destination.image ? [{ url: destination.image }] : [],
+        title: `Explore ${destination.name} - Luxury African Travel | Jemeka Tours`,
+        description: baseDescription,
+        images,
+        type: 'website',
       },
     };
   } catch (error) {

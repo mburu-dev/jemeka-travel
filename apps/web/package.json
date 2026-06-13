@@ -11,6 +11,7 @@
     "test:ui": "playwright test --ui"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@jemeka/api": "*",
     "@payloadcms/db-sqlite": "^3.85.1",
     "@payloadcms/next": "^3.85.1",
@@ -21,7 +22,9 @@
     "@trpc/client": "^11.8.1",
     "@trpc/react-query": "^11.8.1",
     "@trpc/server": "^11.8.1",
+    "@types/react-simple-maps": "^3.0.6",
     "cli-color": "^2.0.4",
+    "d3-geo": "^3.1.1",
     "framer-motion": "^12.18.1",
     "graphql": "^16.14.2",
     "lucide-react": "^0.513.0",
@@ -32,6 +35,7 @@
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-paystack": "^6.0.0",
+    "react-simple-maps": "^3.0.0",
     "resend": "^6.12.4",
     "sonner": "^2.0.3",
     "superjson": "^2.2.2",

@@ -6,6 +6,7 @@ import { trpcServer } from "@/lib/trpc";
 import { AppLayout as Layout } from "@/components/AppLayout";
 import DestinationsFilter from "./DestinationsFilter";
 import DestinationsList from "./DestinationsList";
+import { InteractiveMapDynamic as InteractiveMap } from "@/components/InteractiveMapDynamic";
 
 export const metadata: Metadata = {
   title: "Explore Destinations | Jemeka Tours",
@@ -13,15 +14,16 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  searchParams: Promise<{ region?: string }>;
+  searchParams: Promise<{ region?: string; experience?: string }>;
 }
 
 export default async function DestinationsPage({ searchParams }: PageProps) {
-  const { region } = await searchParams;
+  const { region, experience } = await searchParams;
   
-  const destinations = await trpcServer.destination.list.query(
-    region ? { region } : undefined
-  );
+  const destinations = await trpcServer.destination.list.query({
+    region: region || undefined,
+    experience: experience || undefined,
+  });
 
   return (
     <Layout>
@@ -58,6 +60,34 @@ export default async function DestinationsPage({ searchParams }: PageProps) {
           </Suspense>
         </div>
       </section>
+
+      {/* Interactive Map Explorer (Show only for Kenya/Africa or All) */}
+      {(!region || region === 'africa') && (
+        <section className="py-12 bg-white border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-[#264653]" style={{ fontFamily: 'var(--font-heading)' }}>
+                Explore the Map
+              </h2>
+              <p className="text-gray-500 mt-2">Discover our destinations across Kenya.</p>
+            </div>
+            <div className="h-[500px] w-full rounded-3xl overflow-hidden shadow-lg border border-gray-100 relative bg-[#F8F9FA]">
+              <InteractiveMap 
+                markers={destinations
+                  .filter((d: any) => d.coordinates && d.coordinates.lat && d.coordinates.lng)
+                  .map((d: any) => ({
+                    id: d.id,
+                    name: d.name,
+                    coordinates: [d.coordinates.lng, d.coordinates.lat],
+                    region: d.region,
+                    slug: d.slug
+                  }))
+                } 
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Destinations Grid */}
       <section className="py-16 bg-gray-50">

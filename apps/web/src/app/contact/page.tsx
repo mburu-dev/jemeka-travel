@@ -70,14 +70,14 @@ export default function Contact() {
     {
       icon: Phone,
       title: "Call Us",
-      details: ["+254 726 912577", "+255 123 456 789"],
-      links: ["tel:+254726912577", "tel:+255123456789"],
+      details: ["+254 726 912577", "+254 704500872"],
+      links: ["tel:+254726912577", "tel:+254704500872"],
     },
     {
       icon: Mail,
       title: "Email Us",
-      details: ["njoros2025@gmail.com", "info@jemekatours.com"],
-      links: ["mailto:njoros2025@gmail.com", "mailto:info@jemekatours.com"],
+      details: ["njoros2025@gmail.com", "info@jemekatoursandtravel.com"],
+      links: ["mailto:njoros2025@gmail.com", "mailto:info@jemekatoursandtravel.com"],
     },
     {
       icon: Clock,
@@ -215,15 +215,20 @@ export default function Contact() {
                     destination guides.
                   </p>
                   <div className="flex items-center justify-center gap-4 mt-4">
-                    {["Facebook", "Instagram", "Twitter"].map((social) => (
-                      <Button
-                        key={social}
-                        variant="outline"
-                        size="sm"
-                        className="border-white/30 text-white hover:bg-white hover:text-[#0F4C75]"
-                      >
-                        {social}
-                      </Button>
+                    {[
+                      { name: "Facebook", url: "https://www.facebook.com/groups/686492314417258/", bg: "bg-[#1877F2] hover:bg-[#1877F2]/90 border-transparent" },
+                      { name: "Instagram", url: "#", bg: "bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:opacity-90 border-transparent" },
+                      { name: "Twitter", url: "#", bg: "bg-[#1DA1F2] hover:bg-[#1DA1F2]/90 border-transparent" }
+                    ].map((social) => (
+                      <a href={social.url} key={social.name} target="_blank" rel="noopener noreferrer">
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className={`text-white transition-all ${social.bg}`}
+                        >
+                          {social.name}
+                        </Button>
+                      </a>
                     ))}
                   </div>
                 </CardContent>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Compass, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 
 export function Footer() {
@@ -10,25 +11,20 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              <Compass className="w-8 h-8 text-[#F4A261]" />
-              <div className="flex flex-col">
-                <span
-                  className="text-xl font-bold text-white"
-                  style={{ fontFamily: 'var(--font-heading)'  }}
-                >
-                  Jemeka
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#2A9D8F]">
-                  Tours & Travel
-                </span>
-              </div>
+              <Image 
+                src="/logo.png" 
+                alt="Jemeka Tours Logo" 
+                width={180} 
+                height={60} 
+                className="object-contain" 
+              />
             </Link>
             <p className="text-gray-300 text-sm leading-relaxed">
               Crafting unforgettable journeys across Africa and beyond. 
               Your adventure begins with us.
             </p>
             <div className="flex items-center gap-4 pt-2">
-              <a href="#" aria-label="Follow us on Facebook" className="text-gray-400 hover:text-[#F4A261] transition-colors">
+              <a href="https://www.facebook.com/groups/686492314417258/" target="_blank" rel="noopener noreferrer" aria-label="Join our Facebook Group" className="text-gray-400 hover:text-[#F4A261] transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
               <a href="#" aria-label="Follow us on Instagram" className="text-gray-400 hover:text-[#F4A261] transition-colors">

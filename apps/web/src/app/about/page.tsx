@@ -55,24 +55,28 @@ const stats = [
 
 const team = [
   {
-    name: "James Mwangi",
+    name: "George Githinji Njoroge",
     role: "Founder & CEO",
-    bio: "A passionate safari guide turned entrepreneur with 20+ years of experience in African tourism.",
+    bio: "A passionate safari expert turned entrepreneur with extensive experience in African tourism.",
+    image: "/images/team/george-githinji.webp",
   },
   {
-    name: "Sarah Chen",
+    name: "Joseph Kiai",
     role: "Head of Operations",
     bio: "Expert logistics coordinator ensuring every journey runs smoothly from start to finish.",
+    image: "/images/team/joseph-kiai.webp",
   },
   {
-    name: "David Okafor",
+    name: "Margaret Njoroge",
     role: "Lead Safari Guide",
     bio: "Certified wilderness expert with an encyclopedic knowledge of African wildlife and ecosystems.",
+    image: "/images/team/margaret-njoroge.webp",
   },
   {
-    name: "Emma Thompson",
+    name: "Phyllis Kamau",
     role: "Customer Experience",
     bio: "Dedicated to making sure every traveler has an unforgettable and seamless experience.",
+    image: "/images/team/phyllis.webp",
   },
 ];
 
@@ -82,7 +86,7 @@ export default function About() {
       {/* Hero */}
       <section className="relative h-[40vh] min-h-[300px] flex items-center justify-center">
         <Image
-          src="/images/about-hero.jpg"
+          src="/images/destinations/masai-mara-2.jpg"
           alt="About Jemeka"
           fill
           className="object-cover"
@@ -103,65 +107,117 @@ export default function About() {
         </div>
       </section>
 
-      {/* Our Story */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
+      {/* Our Story - Luxury Cinematic Layout */}
+      <section className="bg-white">
+        {/* Chapter 1: The Epiphany */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-b border-gray-100">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="lg:col-span-5 lg:sticky lg:top-32"
+            >
+              <span className="text-[#F4A261] text-xs uppercase tracking-[0.3em] font-bold mb-4 block">
+                Chapter I
+              </span>
+              <h2
+                className="text-4xl sm:text-6xl font-bold text-[#264653] leading-tight mb-6"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
+                Born from the Red Soil of Kenya
+              </h2>
+              <div className="w-20 h-1 bg-[#F4A261] rounded-full"></div>
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="lg:col-span-7 space-y-8 text-lg text-gray-600 leading-relaxed"
+            >
+              <p className="text-2xl text-[#264653] font-medium leading-snug first-letter:text-7xl first-letter:font-bold first-letter:text-[#0F4C75] first-letter:mr-3 first-letter:float-left first-line:uppercase first-line:tracking-widest">
+                Jemeka Tours & Travel was not born in a corporate boardroom. It was conceived under the vast, star-studded skies of the Masai Mara, amidst the distant roar of lions and the crackle of a campfire.
+              </p>
+              <p>
+                Our founders, native to this breathtaking land, grew up with a profound, almost spiritual connection to the untamed wilderness and vibrant cultures of Kenya. We spent our early years exploring hidden trails, tracking wildlife through the morning mist, and listening to the ancient stories passed down by local elders.
+              </p>
+              <p>
+                We realized that the typical "safari" had become commodified—a checklist of animals viewed through the dusty windows of crowded minivans. We wanted to change that. We wanted to share the true, unfiltered heartbeat of Africa. We envisioned a travel company that didn't just show you the sights, but allowed you to feel the soul of the continent.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Chapter 2: The Philosophy */}
+        <div className="w-full relative h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden">
+          <Image
+            src="/images/destinations/amboseli-2.jpg" 
+            alt="The African Wilderness"
+            fill
+            className="object-cover scale-105"
+          />
+          <div className="absolute inset-0 bg-black/60"></div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="relative z-10 max-w-4xl mx-auto px-4 text-center"
+          >
+             <Heart className="w-12 h-12 text-[#F4A261] mx-auto mb-8 opacity-80" />
+             <h3 
+               className="text-3xl sm:text-5xl font-light text-white leading-tight italic"
+               style={{ fontFamily: 'var(--font-heading)' }}
+             >
+               "We believe luxury isn't found in thread counts or gold fixtures. True luxury is the privilege of authentic connection, the rarity of untouched wilderness, and the profound peace of belonging to something greater than yourself."
+             </h3>
+          </motion.div>
+        </div>
+
+        {/* Chapter 3: The Evolution */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <motion.div 
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-            >
-              <span className="text-[#2A9D8F] text-sm uppercase tracking-[0.2em] font-medium">
-                Our Story
-              </span>
-              <h2
-                className="text-3xl sm:text-4xl font-bold text-[#264653] mt-2 mb-6"
-                style={{ fontFamily: 'var(--font-heading)'  }}
-              >
-                Born from a Love of Adventure
-              </h2>
-              <div className="space-y-4 text-gray-700 leading-relaxed">
-                <p>
-                  Jemeka Tours & Travel was founded in 2015 by James Mwangi, a
-                  former safari guide who dreamed of sharing the magic of Africa
-                  with the world. What started as a small operation in Arusha,
-                  Tanzania has grown into one of East Africa's most trusted tour
-                  operators.
-                </p>
-                <p>
-                  Our name "Jemeka" comes from a Swahili phrase meaning "to
-                  journey together" - and that's exactly what we do. We journey
-                  alongside our travelers, crafting experiences that go beyond
-                  typical tourism to create genuine connections with places,
-                  people, and wildlife.
-                </p>
-                <p>
-                  Today, we operate across 50+ destinations in Africa and
-                  beyond, offering everything from luxury safaris to budget
-                  adventures, cultural immersions to beach getaways. But no
-                  matter how much we grow, our core mission remains the same:
-                  creating transformative travel experiences that leave both our
-                  guests and the destinations they visit better than before.
-                </p>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl"
+              className="lg:col-span-6 relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl"
             >
               <Image
-                src="/images/destinations/serengeti.jpg"
-                alt="Safari"
+                src="/images/destinations/masai-mara-4.jpg"
+                alt="Safari Journey"
                 fill
                 className="object-cover"
               />
-              <div className="absolute -bottom-6 -right-6 bg-[#0F4C75] text-white p-6 rounded-xl shadow-lg z-10">
-                <div className="text-3xl font-bold">10+</div>
-                <div className="text-white/80 text-sm">Years of Excellence</div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#264653]/90 via-transparent to-transparent"></div>
+              <div className="absolute bottom-10 left-10 right-10 text-white">
+                <div className="text-5xl font-bold mb-2 text-[#F4A261]">10+</div>
+                <div className="text-lg font-medium text-white/90 uppercase tracking-wider">Years Crafting Masterpieces</div>
               </div>
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="lg:col-span-6 space-y-8 text-lg text-gray-600 leading-relaxed"
+            >
+              <span className="text-[#0F4C75] text-xs uppercase tracking-[0.3em] font-bold mb-4 block">
+                Chapter II
+              </span>
+              <h2
+                className="text-4xl sm:text-5xl font-bold text-[#264653] leading-tight mb-6"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
+                Curators of the Extraordinary
+              </h2>
+              <p>
+                From those humble, passionate beginnings, Jemeka Tours has evolved into one of East Africa's premier luxury travel outfitters. Today, we don't just operate in Kenya; we meticulously curate cross-border expeditions spanning the continent's most pristine landscapes.
+              </p>
+              <p>
+                Yet, despite our growth, our core ethos remains fiercely unchanged. We are still that passionate team of locals. We still personally vet every lodge, handpick every guide, and test every route. We believe that a great journey requires a master orchestrator behind the scenes—someone who handles the complex logistics flawlessly so that you can remain fully immersed in the magic of the moment.
+              </p>
+              <p className="font-semibold text-[#264653] text-xl italic pt-4 border-t border-gray-200">
+                When you travel with Jemeka, you aren't just a client; you are our honored guest, and we are thrilled to welcome you home.
+              </p>
             </motion.div>
           </div>
         </div>
@@ -272,9 +328,20 @@ export default function About() {
               >
                 <Card className="text-center border-0 shadow-md hover:shadow-lg transition-shadow h-full">
                   <CardContent className="p-6">
-                    <div className="w-20 h-20 bg-gradient-to-br from-[#0F4C75] to-[#2A9D8F] rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-                      {member.name.charAt(0)}
-                    </div>
+                    {member.image ? (
+                      <div className="relative w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden border-4 border-[#2A9D8F]/20 shadow-inner">
+                        <Image
+                          src={member.image}
+                          alt={member.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-28 h-28 bg-gradient-to-br from-[#0F4C75] to-[#2A9D8F] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4 border-4 border-[#2A9D8F]/20">
+                        {member.name.charAt(0)}
+                      </div>
+                    )}
                     <h3
                       className="text-lg font-bold text-[#264653]"
                       style={{ fontFamily: 'var(--font-heading)'  }}
@@ -327,7 +394,7 @@ export default function About() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-[#264653] px-8 rounded-full"
+                  className="bg-transparent border-white text-white hover:bg-white hover:text-[#264653] px-8 rounded-full"
                 >
                   Contact Us
                 </Button>
