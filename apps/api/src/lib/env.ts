@@ -11,6 +11,7 @@ function required(name: string): string {
 export const env = {
   isProduction: process.env.NODE_ENV === "production",
   databaseUrl: required("DATABASE_URL"),
+  databaseAuthToken: process.env.DATABASE_AUTH_TOKEN ?? "",
   authSecret: process.env.AUTH_SECRET ?? "",
   frontendUrl: required("FRONTEND_URL"),
 };

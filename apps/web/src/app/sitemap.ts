@@ -20,25 +20,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1 : 0.8,
   }));
 
-  // Dynamic routes
-  const [destinations, packages] = await Promise.all([
-    trpcServer.destination.list.query(),
-    trpcServer.package.list.query({}),
-  ]);
+  // Dynamic routes — wrapped in try/catch so build succeeds even if DB is
+  // not reachable (e.g. during CI / static export without live credentials).
+  let destinationRoutes: MetadataRoute.Sitemap = [];
+  let packageRoutes: MetadataRoute.Sitemap = [];
 
-  const destinationRoutes = (destinations || []).map((dest: any) => ({
-    url: `${baseUrl}/destinations/${dest.slug}`,
-    lastModified: new Date(dest.updatedAt),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
+  try {
+    const [destinations, packages] = await Promise.all([
+      trpcServer.destination.list.query(),
+      trpcServer.package.list.query({}),
+    ]);
 
-  const packageRoutes = (packages || []).map((pkg: any) => ({
-    url: `${baseUrl}/packages/${pkg.slug}`,
-    lastModified: new Date(pkg.updatedAt),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
+    destinationRoutes = (destinations || []).map((dest: any) => ({
+      url: `${baseUrl}/destinations/${dest.slug}`,
+      lastModified: new Date(dest.updatedAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }));
+
+    packageRoutes = (packages || []).map((pkg: any) => ({
+      url: `${baseUrl}/packages/${pkg.slug}`,
+      lastModified: new Date(pkg.updatedAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }));
+  } catch (error) {
+    // During build time, the API may not be reachable — fall back to static routes only.
+    console.warn('[sitemap] Could not fetch dynamic routes, using static routes only:', error);
+  }
 
   return [...routes, ...destinationRoutes, ...packageRoutes];
 }

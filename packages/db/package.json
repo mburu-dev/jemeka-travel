@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
-    "@libsql/client": "^0.14.0",
-    "drizzle-orm": "^0.45.1"
+    "@libsql/client": "^0.17.3",
+    "drizzle-orm": "^0.45.2"
   }
 }

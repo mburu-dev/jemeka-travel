@@ -7,11 +7,23 @@ const fullSchema = { ...schema, ...relations };
 
 let instance: any;
 
-export function getDb(url?: string) {
-  if (!instance || url) {
-    const dbUrl = url || process.env.DATABASE_URL || "file:sqlite.db";
-    const client = createClient({ url: dbUrl });
-    instance = drizzle(client, { schema: fullSchema });
+export function getDb(url?: string, authToken?: string) {
+  if (!instance) {
+    // Cloudflare worker fallback for process.env
+    const _processEnv = typeof process !== "undefined" && process.env ? (process.env as any) : {};
+    
+    const dbUrl = url || _processEnv.DATABASE_URL || "file:sqlite.db";
+    const token = authToken || _processEnv.DATABASE_AUTH_TOKEN;
+    
+    const client = createClient({ 
+      url: dbUrl,
+      ...(token ? { authToken: token } : {})
+    });
+    // Type cast required: @libsql/client@0.17 and drizzle-orm@0.45 ship slightly
+    // different Client type definitions from @libsql/core. Runtime behaviour is
+    // identical — drizzle uses the same WebSocket/HTTP protocol under the hood.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    instance = drizzle(client as any, { schema: fullSchema });
   }
   return instance;
 }

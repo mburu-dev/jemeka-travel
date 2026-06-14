@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { TRPCReactProvider } from "../providers/trpc-provider";
 
-const inter = Inter({
+const inter = localFont({
+  src: "../../public/fonts/inter.woff2",
   variable: "--font-sans",
-  subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
-const outfit = Outfit({
+const outfit = localFont({
+  src: "../../public/fonts/outfit.woff2",
   variable: "--font-heading",
-  subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {

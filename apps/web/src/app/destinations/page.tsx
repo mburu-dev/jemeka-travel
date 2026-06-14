@@ -23,10 +23,15 @@ interface PageProps {
 export default async function DestinationsPage({ searchParams }: PageProps) {
   const { region, experience } = await searchParams;
   
-  const destinations = await trpcServer.destination.list.query({
-    region: region || undefined,
-    experience: experience || undefined,
-  });
+  let destinations: any[] = [];
+  try {
+    destinations = await trpcServer.destination.list.query({
+      region: region || undefined,
+      experience: experience || undefined,
+    });
+  } catch {
+    // API unreachable during SSR — render with empty data.
+  }
 
   return (
     <Layout>

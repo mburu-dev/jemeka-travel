@@ -19,5 +19,19 @@
   "devDependencies": {
     "concurrently": "^10.0.3",
     "turbo": "^2.9.18"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.3",
+    "drizzle-orm": "^0.45.2"
+  },
+  "overrides": {
+    "@libsql/client": "^0.17.3",
+    "jose": "^6.2.3",
+    "@payloadcms/db-sqlite": {
+      "@libsql/client": "^0.17.3"
+    },
+    "payload": {
+      "jose": "^6.2.3"
+    }
   }
 }

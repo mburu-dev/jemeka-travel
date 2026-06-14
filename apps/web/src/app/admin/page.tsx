@@ -8,7 +8,12 @@ import { Shield, ArrowLeft } from "lucide-react";
 import AdminClient from "./AdminClient";
 
 export default async function AdminPage() {
-  const session = await auth();
+  let session = null;
+  try {
+    session = await auth();
+  } catch {
+    // Auth unavailable — treat as unauthenticated
+  }
 
   if (!session) {
     redirect("/login?callbackUrl=/admin");

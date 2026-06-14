@@ -4,6 +4,8 @@ import { RootLayout } from '@payloadcms/next/layouts'
 import { importMap } from './cms/[[...segments]]/importMap'
 import React from 'react'
 
+export const runtime = 'nodejs'
+
 const Layout = ({ children }: { children: React.ReactNode }) => (
   // @ts-expect-error – Payload's RootLayout requires serverFunction internally; not needed for basic usage
   <RootLayout config={configPromise} importMap={importMap}>

@@ -37,15 +37,15 @@ export default buildConfig({
       collections: {
         media: true,
       },
-      bucket: process.env.S3_BUCKET || 'jemeka-media',
+      bucket: process.env.R2_BUCKET || 'jemeka-media',
       config: {
         credentials: {
-          accessKeyId: process.env.S3_ACCESS_KEY_ID || 'admin',
-          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || 'password',
+          accessKeyId: process.env.R2_ACCESS_KEY_ID || 'admin',
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || 'password',
         },
-        region: process.env.S3_REGION || 'us-east-1',
-        endpoint: process.env.S3_ENDPOINT || 'http://localhost:9000',
-        forcePathStyle: true,
+        region: process.env.R2_REGION || 'auto',
+        endpoint: process.env.R2_ENDPOINT || 'https://<ACCOUNT_ID>.r2.cloudflarestorage.com',
+        forcePathStyle: false, // R2 doesn't need path style
       },
     }),
   ],

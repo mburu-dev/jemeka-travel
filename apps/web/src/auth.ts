@@ -1,53 +1,35 @@
 import NextAuth from "next-auth";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { getDb, users, accounts, sessions, verificationTokens } from "@jemeka/db";
 import Google from "next-auth/providers/google";
-import ResendProvider from "next-auth/providers/resend";
-import { render } from "@react-email/components";
-import MagicLinkEmail from "./emails/MagicLinkEmail";
-import React from "react";
-import { Resend } from "resend";
 
-const resendClient = process.env.AUTH_RESEND_KEY 
-  ? new Resend(process.env.AUTH_RESEND_KEY) 
-  : null;
+// NOTE: We use JWT session strategy (no DB adapter) so the Next.js web Worker
+// stays free of @libsql/client and can run on the Cloudflare edge.
+// User identity is stored in a signed, encrypted cookie (no server-side session store needed).
+//
+// ⚠️  The Resend magic-link provider requires a database adapter (to store
+//     verification tokens). It is intentionally excluded from the edge build.
+//     To add magic-link support, wire up the @auth/drizzle-adapter with Turso.
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: DrizzleAdapter(getDb(), {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }),
+  // JWT strategy — no database adapter required
+  session: { strategy: "jwt" },
   providers: [
     Google,
-    ResendProvider({
-      from: "Jemeka Tours <onboarding@resend.dev>", // Replace with your domain in production
-      async sendVerificationRequest({ identifier, url, provider }) {
-        if (!resendClient) {
-          throw new Error("AUTH_RESEND_KEY is not configured.");
-        }
-        const html = await render(React.createElement(MagicLinkEmail, { url }));
-        
-        const result = await resendClient.emails.send({
-          from: provider.from ?? "Jemeka Tours <onboarding@resend.dev>",
-          to: identifier,
-          subject: `Log in to Jemeka Tours`,
-          html: html,
-        });
-
-        if (result.error) {
-          throw new Error(result.error.message);
-        }
-      },
-    }),
   ],
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
+    jwt({ token, user }) {
+      // Persist user id and role into the JWT token on sign in
+      if (user) {
+        token.id = user.id;
         // @ts-expect-error role is added
-        session.user.role = user.role || "user";
+        token.role = user.role || "user";
+      }
+      return token;
+    },
+    session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        // @ts-expect-error role is a custom field added via JWT callback
+        session.user.role = token.role || "user";
       }
       return session;
     },

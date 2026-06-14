@@ -14,10 +14,19 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const [destinations, packages] = await Promise.all([
-    trpcServer.destination.featured.query(),
-    trpcServer.package.featured.query(),
-  ]);
+  // Wrap tRPC calls in try/catch: if the API Worker is unreachable during SSR
+  // (cold start, network error, etc.) fall back to empty arrays so the page
+  // still renders. The client-side hydration will retry via React Query.
+  let destinations: any[] = [];
+  let packages: any[] = [];
+  try {
+    [destinations, packages] = await Promise.all([
+      trpcServer.destination.featured.query(),
+      trpcServer.package.featured.query(),
+    ]);
+  } catch {
+    // API unreachable during SSR — render with empty data.
+  }
 
   return (
     <Layout>

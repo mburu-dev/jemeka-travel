@@ -27,14 +27,20 @@ interface PageProps {
 export default async function PackagesPage({ searchParams }: PageProps) {
   const params = await searchParams;
   
-  const [packages, categories] = await Promise.all([
-    trpcServer.package.list.query({
-      category: params.category,
-      minPrice: params.minPrice ? Number(params.minPrice) : undefined,
-      maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined,
-    }),
-    trpcServer.package.categories.query(),
-  ]);
+  let packages: any[] = [];
+  let categories: any[] = [];
+  try {
+    [packages, categories] = await Promise.all([
+      trpcServer.package.list.query({
+        category: params.category,
+        minPrice: params.minPrice ? Number(params.minPrice) : undefined,
+        maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined,
+      }),
+      trpcServer.package.categories.query(),
+    ]);
+  } catch {
+    // API unreachable during SSR — render with empty data.
+  }
 
   const filteredPackages = packages?.filter((pkg: any) => {
     if (params.q) {
