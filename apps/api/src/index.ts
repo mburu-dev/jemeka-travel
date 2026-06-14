@@ -31,7 +31,7 @@ app.use(
   "/api/trpc/*",
   cors({
     origin: allowedOrigins,
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowHeaders: ["Content-Type", "Authorization", "x-trpc-source"],
     allowMethods: ["GET", "POST", "OPTIONS"],
     credentials: true,
   })

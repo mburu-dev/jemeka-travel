@@ -1,0 +1,54 @@
+
+> web@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.19
+   - Environments: .env.local, .env
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 90s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/21) ...
+   Generating static pages (5/21) 
+   Generating static pages (10/21) 
+   Generating static pages (15/21) 
+ ✓ Generating static pages (21/21)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ƒ /                                     9.5 kB         219 kB
+├ ○ /_not-found                            996 B         105 kB
+├ ƒ /about                               5.02 kB         522 kB
+├ ƒ /admin                               6.71 kB         223 kB
+├ ƒ /api/[...slug]                         149 B         104 kB
+├ ƒ /api/auth/[...nextauth]                149 B         104 kB
+├ ƒ /api/planner                           149 B         104 kB
+├ ƒ /builder                             2.75 kB         212 kB
+├ ƒ /cms/[[...segments]]                   388 B         566 kB
+├ ƒ /contact                             3.81 kB         525 kB
+├ ○ /cookie-policy                         171 B         107 kB
+├ ƒ /destinations                        3.82 kB         213 kB
+├ ƒ /destinations/[slug]                  7.5 kB         226 kB
+├ ○ /login                               3.11 kB         131 kB
+├ ƒ /packages                            10.5 kB         222 kB
+├ ƒ /packages/[slug]                     48.9 kB         268 kB
+├ ƒ /planner                             4.45 kB         214 kB
+├ ○ /privacy-policy                        171 B         107 kB
+├ ○ /robots.txt                            149 B         104 kB
+├ ƒ /services                            6.23 kB         216 kB
+├ ○ /sitemap.xml                           149 B         104 kB
+├ ○ /terms-of-service                      171 B         107 kB
+└ ƒ /testimonials                        3.46 kB         525 kB
++ First Load JS shared by all             104 kB
+  ├ chunks/18-f2538672e261a112.js        46.7 kB
+  ├ chunks/87c73c54-09e1ba5c70e60a51.js  54.2 kB
+  └ other shared chunks (total)          2.86 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -13,6 +13,8 @@ import {
 import { Menu, LogOut, ChevronDown, Shield } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
+import { signOut } from "next-auth/react";
+
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/destinations", label: "Destinations" },
@@ -23,16 +25,14 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
+export function Navbar({ searchBar, user }: { searchBar?: React.ReactNode, user?: any }) {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   
-  // Mock auth state for marketing site
-  const isAuthenticated = false;
-  const isAdmin = false;
+  const isAuthenticated = !!user;
+  const isAdmin = user?.role === "admin";
   const isLoading = false;
-  const user = null;
-  const logout = () => {};
+  const logout = () => signOut({ callbackUrl: "/" });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -160,9 +160,11 @@ export function Navbar({ searchBar }: { searchBar?: React.ReactNode }) {
                 <Button
                   variant="ghost"
                   size="icon"
+                  aria-label="Open main navigation"
+                  aria-haspopup="dialog"
                   className="text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800"
                 >
-                  <Menu className="w-6 h-6" />
+                  <Menu className="w-6 h-6" aria-hidden="true" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80 bg-white dark:bg-slate-950 border-l border-gray-100 dark:border-slate-800">

@@ -24,7 +24,7 @@ import {
   Award,
   Sparkles,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -45,6 +45,13 @@ interface HomeClientProps {
 }
 
 export default function HomeClient({ destinations, packages }: HomeClientProps) {
+  const prefersReducedMotion = useReducedMotion();
+
+  // When reduced motion is preferred, disable all enter animations
+  const motionProps = prefersReducedMotion
+    ? { initial: false, animate: false, transition: { duration: 0 } }
+    : {};
+
   const staticTestimonials = [
     { id: 1, name: "Sarah Mitchell", destination: "Serengeti Safari", comment: "Absolutely life-changing. Jemeka's guides knew exactly where to find the lions at sunset — a moment I'll never forget.", rating: 5, isVerified: true },
     { id: 2, name: "James Okonkwo", destination: "Kilimanjaro Trek", comment: "Reaching the summit of Kilimanjaro was my dream, and Jemeka made it a reality. The support team was phenomenal throughout.", rating: 5, isVerified: true },

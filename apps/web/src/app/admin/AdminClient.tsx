@@ -34,8 +34,12 @@ interface Props {
 }
 
 export default function AdminClient({ userName }: Props) {
-  const { data: bookings, isLoading: bookingsLoading } = trpc.booking.list.useQuery();
-  const { data: enquiries, isLoading: enquiriesLoading } = trpc.enquiry.list.useQuery();
+  const { data: bookingsData, isLoading: bookingsLoading } = trpc.booking.list.useQuery();
+  const { data: enquiriesData, isLoading: enquiriesLoading } = trpc.enquiry.list.useQuery();
+
+  // Unwrap paginated responses
+  const bookings = bookingsData?.items;
+  const enquiries = enquiriesData?.items;
 
   const utils = trpc.useUtils();
 
@@ -61,6 +65,7 @@ export default function AdminClient({ userName }: Props) {
   const totalRevenue = bookings
     ?.filter((b: Booking) => b.status === "confirmed" || b.status === "completed")
     .reduce((sum: number, b: Booking) => sum + Number(b.totalPrice), 0);
+
 
   const stats = [
     {

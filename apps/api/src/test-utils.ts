@@ -9,12 +9,9 @@ import path from "path";
 import fs from "fs";
 
 export async function setupTestDb() {
-  const testDbUrl = "file:test.db";
-  // Delete existing test db if it exists
-  if (fs.existsSync("test.db")) {
-    fs.unlinkSync("test.db");
-  }
-  
+  const dbName = `test-${Math.random().toString(36).substring(7)}.db`;
+  const testDbUrl = `file:${dbName}`;
+  // Ensure we clean up later if needed, but since it's a test env, we can just create unique ones
   const db = getDb(testDbUrl);
   
   // Run migrations
@@ -30,7 +27,7 @@ export async function createTestContext(user?: User): Promise<TrpcContext> {
   const req = new Request("http://localhost:4000/api/trpc");
   
   if (user) {
-    const db = getDb("file:test.db");
+    const db = getDb();
     const token = "test-token-" + Math.random().toString(36).substring(7);
     await db.insert(sessions).values({
       sessionToken: token,

@@ -79,7 +79,7 @@ export function SearchBar() {
                       Destinations
                     </h3>
                     <div className="space-y-1">
-                      {data.destinations.map((dest) => (
+                      {data.destinations.map((dest: { id: number; slug: string; image?: string; name: string; country: string }) => (
                         <Link 
                           key={dest.id} 
                           href={`/destinations/${dest.slug}`}
@@ -115,7 +115,7 @@ export function SearchBar() {
                       Tour Packages
                     </h3>
                     <div className="space-y-1">
-                      {data.packages.map((pkg) => (
+                      {data.packages.map((pkg: { id: number; slug: string; image?: string; title: string; category: string; price: string }) => (
                         <Link 
                           key={pkg.id} 
                           href={`/packages/${pkg.slug}`}

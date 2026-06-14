@@ -2,12 +2,26 @@ import { withPayload } from '@payloadcms/next/withPayload';
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
+  // Dramatically reduces dev-mode cold compile time by tree-shaking icon/animation imports
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "framer-motion",
+      "@radix-ui/react-accordion",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-separator",
+    ],
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // Exclude Payload CMS and its heavy transitive deps from the shared bundle.
+  // Without this, withPayload() causes every route to compile ~2500 modules.
+  // With this, Payload only compiles when /cms routes are visited.
+  serverExternalPackages: [
+    "@payloadcms/db-sqlite",
+    "@payloadcms/richtext-lexical",
+    "@payloadcms/storage-s3",
+    "payload",
+  ],
   images: {
     remotePatterns: [
       {

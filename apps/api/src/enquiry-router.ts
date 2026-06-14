@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb, enquiries } from "@jemeka/db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, lt, and } from "drizzle-orm";
 
 export const enquiryRouter = createRouter({
   create: publicQuery
@@ -24,12 +24,32 @@ export const enquiryRouter = createRouter({
     }),
 
   // Admin only
-  list: adminQuery.query(async () => {
-    const db = getDb();
-    return db.query.enquiries.findMany({
-      orderBy: [desc(enquiries.createdAt)],
-    });
-  }),
+  list: adminQuery
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(20),
+        cursor: z.number().optional(),
+      }).optional()
+    )
+    .query(async ({ input }) => {
+      const db = getDb();
+      const limit = input?.limit ?? 20;
+      const conditions: any[] = [];
+      if (input?.cursor !== undefined) {
+        conditions.push(lt(enquiries.id, input.cursor));
+      }
+      const items = await db.query.enquiries.findMany({
+        where: conditions.length > 0 ? and(...conditions) : undefined,
+        orderBy: [desc(enquiries.id)],
+        limit: limit + 1,
+      });
+      let nextCursor: number | undefined;
+      if (items.length > limit) {
+        const next = items.pop();
+        nextCursor = next!.id;
+      }
+      return { items, nextCursor };
+    }),
 
   updateStatus: adminQuery
     .input(

@@ -21,7 +21,8 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 export default function Testimonials() {
-  const { data: testimonials, isLoading } = trpc.testimonial.list.useQuery({});
+  const { data: testimonialsData, isLoading } = trpc.testimonial.list.useQuery({});
+  const testimonials = testimonialsData?.items;
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -49,7 +50,7 @@ export default function Testimonials() {
 
   const averageRating = testimonials?.length
     ? (
-        testimonials.reduce((sum, t) => sum + t.rating, 0) /
+        (testimonials as { rating: number }[]).reduce((sum: number, t: { rating: number }) => sum + t.rating, 0) /
         testimonials.length
       ).toFixed(1)
     : "0";
@@ -95,7 +96,7 @@ export default function Testimonials() {
             <div className="w-px h-12 bg-gray-200 hidden sm:block" />
             <div className="text-center">
               <div className="text-3xl font-bold text-[#264653]">
-                {testimonials?.length || 0}
+                {testimonialsData?.items?.length || 0}
               </div>
               <p className="text-gray-500 text-sm">Total Reviews</p>
             </div>
@@ -252,7 +253,7 @@ export default function Testimonials() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {testimonials?.map((testimonial, index) => (
+              {testimonials?.map((testimonial: any, index: number) => (
                 <motion.div
                   key={testimonial.id}
                   initial={{ opacity: 0, y: 20 }}

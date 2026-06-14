@@ -1,32 +1,46 @@
 import { z } from "zod";
 import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb, testimonials } from "@jemeka/db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, lt } from "drizzle-orm";
 
 export const testimonialRouter = createRouter({
   list: publicQuery
     .input(
       z.object({
         verified: z.boolean().optional(),
-        limit: z.number().optional(),
+        limit: z.number().min(1).max(100).default(20),
+        cursor: z.number().optional(), // last id from previous page
       }).optional()
     )
     .query(async ({ input }) => {
       const db = getDb();
+      const limit = input?.limit ?? 20;
       const conditions = [eq(testimonials.isActive, true)];
 
       if (input?.verified !== undefined) {
         conditions.push(eq(testimonials.isVerified, input.verified));
       }
+      if (input?.cursor !== undefined) {
+        conditions.push(lt(testimonials.id, input.cursor));
+      }
 
       const where = and(...conditions);
 
-      return db.query.testimonials.findMany({
+      const items = await db.query.testimonials.findMany({
         where,
-        orderBy: [desc(testimonials.createdAt)],
-        limit: input?.limit ?? 50,
+        orderBy: [desc(testimonials.id)],
+        limit: limit + 1, // fetch one extra to determine if there's a next page
       });
+
+      let nextCursor: number | undefined;
+      if (items.length > limit) {
+        const next = items.pop();
+        nextCursor = next!.id;
+      }
+
+      return { items, nextCursor };
     }),
+
 
   create: publicQuery
     .input(

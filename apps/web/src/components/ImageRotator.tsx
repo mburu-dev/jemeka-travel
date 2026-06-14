@@ -51,7 +51,6 @@ export function ImageRotator({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isHovered, autoPlay, validImages.length, interval]);
 
   if (validImages.length === 0) return null;

@@ -44,6 +44,7 @@ export default function DestinationDetailClient({ destination }: DestinationDeta
         {galleryImages.length > 1 ? (
           <ImageRotator 
             images={galleryImages} 
+            alt={destination.name}
             interval={5000} 
             className="w-full h-full object-cover" 
             subtleMotion={isComingSoon} 

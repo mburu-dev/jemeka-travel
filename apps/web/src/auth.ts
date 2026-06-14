@@ -30,7 +30,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const html = await render(React.createElement(MagicLinkEmail, { url }));
         
         const result = await resendClient.emails.send({
-          from: provider.from,
+          from: provider.from ?? "Jemeka Tours <onboarding@resend.dev>",
           to: identifier,
           subject: `Log in to Jemeka Tours`,
           html: html,

@@ -145,7 +145,7 @@ export function HeroSlideshow({ totalSlides }: HeroSlideshowProps) {
       onTouchStart={() => setIsHovered(true)}
       onTouchEnd={() => setIsHovered(false)}
     >
-      <AnimatePresence initial={false} mode="crossfade">
+      <AnimatePresence initial={false} mode="wait">
         <motion.div
           key={currentSlide}
           variants={transitionVariants[transition]}

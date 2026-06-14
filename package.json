@@ -8,14 +8,16 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\"",
+    "dev": "turbo run dev",
     "dev:web": "npm run dev --workspace=apps/web",
     "dev:api": "npm run dev --workspace=apps/api",
+    "build": "turbo run build",
     "build:web": "npm run build --workspace=apps/web",
     "build:api": "npm run build --workspace=apps/api",
-    "test": "concurrently \"npm run test --workspace=apps/api\" \"npm run test --workspace=apps/web\""
+    "test": "turbo run test"
   },
   "devDependencies": {
-    "concurrently": "^10.0.3"
+    "concurrently": "^10.0.3",
+    "turbo": "^2.9.18"
   }
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, publicQuery, authedQuery, adminQuery } from "./middleware";
 import { getDb, bookings } from "@jemeka/db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, lt } from "drizzle-orm";
 
 export function generateBookingRef() {
   const prefix = "JMK";
@@ -61,12 +61,32 @@ export const bookingRouter = createRouter({
     }),
 
   // Admin only
-  list: adminQuery.query(async () => {
-    const db = getDb();
-    return db.query.bookings.findMany({
-      orderBy: [desc(bookings.createdAt)],
-    });
-  }),
+  list: adminQuery
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(20),
+        cursor: z.number().optional(),
+      }).optional()
+    )
+    .query(async ({ input }) => {
+      const db = getDb();
+      const limit = input?.limit ?? 20;
+      const conditions: any[] = [];
+      if (input?.cursor !== undefined) {
+        conditions.push(lt(bookings.id, input.cursor));
+      }
+      const items = await db.query.bookings.findMany({
+        where: conditions.length > 0 ? and(...conditions) : undefined,
+        orderBy: [desc(bookings.id)],
+        limit: limit + 1,
+      });
+      let nextCursor: number | undefined;
+      if (items.length > limit) {
+        const next = items.pop();
+        nextCursor = next!.id;
+      }
+      return { items, nextCursor };
+    }),
 
   updateStatus: adminQuery
     .input(

@@ -20,5 +20,5 @@ export {
   users, accounts, sessions, verificationTokens, authenticators, 
   destinations, packages, bookings, testimonials, enquiries, blogPosts 
 } from "./schema";
-export type { User, Package } from "./schema";
+export type { User, Package, Booking, Enquiry, Testimonial, BlogPost } from "./schema";
 export * from "./relations";
