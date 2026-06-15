@@ -46,7 +46,10 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci
+
+      - name: Fix npm optional dependency bug (Linux native bindings)
+        run: npm install @rolldown/binding-linux-x64-gnu @ast-grep/napi-linux-x64-gnu lightningcss-linux-x64-gnu --no-save
 
       - name: Run API tests
         run: npx vitest run --reporter=verbose
