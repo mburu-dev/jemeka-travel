@@ -79,6 +79,9 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+      - name: Install native bindings for OpenNext (Linux)
+        run: npm install @ast-grep/napi-linux-x64-gnu --no-save
+
       - name: Build Web (OpenNext for Cloudflare)
         run: node scripts/build-worker.js
         working-directory: apps/web
