@@ -48,6 +48,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install native bindings for Vitest (Linux)
+        run: npm install @rolldown/binding-linux-x64-gnu --no-save
+
       - name: Run API tests
         run: npx vitest run --reporter=verbose
         working-directory: apps/api
