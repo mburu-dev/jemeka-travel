@@ -9,7 +9,9 @@ describe('Auth Router', () => {
   let unauthenticatedCaller: any;
 
   beforeAll(async () => {
-    db = await setupTestDb();
+    const testDb = await setupTestDb();
+
+    db = testDb.db;
     
     [testUser] = await db.insert(users).values({
       name: "Auth Test User",
@@ -17,8 +19,8 @@ describe('Auth Router', () => {
       role: "user",
     }).returning();
 
-    authenticatedCaller = await createAuthenticatedTestCaller(testUser);
-    unauthenticatedCaller = await createTestCaller();
+    authenticatedCaller = await createAuthenticatedTestCaller(testUser, db);
+    unauthenticatedCaller = await createTestCaller(db);
   });
 
   it('should allow public ping', async () => {

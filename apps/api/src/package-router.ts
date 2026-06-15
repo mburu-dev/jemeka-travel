@@ -16,8 +16,8 @@ export const packageRouter = createRouter({
         search: z.string().optional(),
       }).optional()
     )
-    .query(async ({ input }) => {
-      const db = getDb();
+    .query(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       const conditions = [];
 
       if (input?.category) {
@@ -49,8 +49,8 @@ export const packageRouter = createRouter({
 
   getBySlug: publicQuery
     .input(z.object({ slug: z.string() }))
-    .query(async ({ input }) => {
-      const db = getDb();
+    .query(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       const pkg = await db.query.packages.findFirst({
         where: eq(packages.slug, input.slug),
       });
@@ -66,8 +66,8 @@ export const packageRouter = createRouter({
       return { ...pkg, destination };
     }),
 
-  featured: publicQuery.query(async () => {
-    const db = getDb();
+  featured: publicQuery.query(async ({ ctx }) => {
+    const db = ctx.db || getDb();
     return db.query.packages.findMany({
       where: eq(packages.isFeatured, true),
       orderBy: (p: any, { desc }: any) => [desc(p.rating)],

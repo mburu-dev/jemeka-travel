@@ -12,8 +12,8 @@ export const destinationRouter = createRouter({
         featured: z.boolean().optional(),
       }).optional()
     )
-    .query(async ({ input }) => {
-      const db = getDb();
+    .query(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       const conditions = [];
 
       if (input?.region) {
@@ -36,8 +36,8 @@ export const destinationRouter = createRouter({
 
   getBySlug: publicQuery
     .input(z.object({ slug: z.string() }))
-    .query(async ({ input }) => {
-      const db = getDb();
+    .query(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       const result = await db.query.destinations.findFirst({
         where: eq(destinations.slug, input.slug),
       });
@@ -59,15 +59,15 @@ export const destinationRouter = createRouter({
 
   getById: publicQuery
     .input(z.object({ id: z.number() }))
-    .query(async ({ input }) => {
-      const db = getDb();
+    .query(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       return db.query.destinations.findFirst({
         where: eq(destinations.id, input.id),
       });
     }),
 
-  featured: publicQuery.query(async () => {
-    const db = getDb();
+  featured: publicQuery.query(async ({ ctx }) => {
+    const db = ctx.db || getDb();
     return db.query.destinations.findMany({
       where: eq(destinations.isFeatured, true),
       orderBy: (d: any, { asc }: any) => [asc(d.name)],

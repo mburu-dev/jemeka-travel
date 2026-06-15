@@ -7,7 +7,9 @@ describe('Search Router', () => {
   let caller: any;
 
   beforeAll(async () => {
-    db = await setupTestDb();
+    const testDb = await setupTestDb();
+
+    db = testDb.db;
     
     const [dest] = await db.insert(destinations).values({
       name: "Zanzibar Special",
@@ -29,7 +31,7 @@ describe('Search Router', () => {
       isFeatured: true,
     });
 
-    caller = await createTestCaller();
+    caller = await createTestCaller(db);
   });
 
   it('should return matching packages and destinations', async () => {

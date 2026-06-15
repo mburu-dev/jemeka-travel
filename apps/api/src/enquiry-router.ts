@@ -15,8 +15,8 @@ export const enquiryRouter = createRouter({
         destinationInterest: z.string().optional(),
       })
     )
-    .mutation(async ({ input }) => {
-      const db = getDb();
+    .mutation(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       return db.insert(enquiries).values({
         ...input,
         status: "new",
@@ -31,8 +31,8 @@ export const enquiryRouter = createRouter({
         cursor: z.number().optional(),
       }).optional()
     )
-    .query(async ({ input }) => {
-      const db = getDb();
+    .query(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       const limit = input?.limit ?? 20;
       const conditions: any[] = [];
       if (input?.cursor !== undefined) {
@@ -58,8 +58,8 @@ export const enquiryRouter = createRouter({
         status: z.enum(["new", "read", "responded", "closed"]),
       })
     )
-    .mutation(async ({ input }) => {
-      const db = getDb();
+    .mutation(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       return db
         .update(enquiries)
         .set({ status: input.status })
@@ -69,7 +69,7 @@ export const enquiryRouter = createRouter({
   delete: adminQuery
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = ctx.db || getDb();
       return db.delete(enquiries).where(eq(enquiries.id, input.id));
     }),
 });

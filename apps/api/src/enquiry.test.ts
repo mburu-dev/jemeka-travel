@@ -9,7 +9,9 @@ describe('Enquiry Router', () => {
   let adminCaller: any;
 
   beforeAll(async () => {
-    db = await setupTestDb();
+    const testDb = await setupTestDb();
+
+    db = testDb.db;
     
     const [testAdmin] = await db.insert(users).values({
       name: "Admin",
@@ -17,8 +19,8 @@ describe('Enquiry Router', () => {
       role: "admin",
     }).returning();
 
-    caller = await createTestCaller();
-    adminCaller = await createAuthenticatedTestCaller(testAdmin);
+    caller = await createTestCaller(db);
+    adminCaller = await createAuthenticatedTestCaller(testAdmin, db);
   });
 
   it('should create an enquiry', async () => {

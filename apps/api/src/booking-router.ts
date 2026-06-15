@@ -27,7 +27,7 @@ export const bookingRouter = createRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const db = getDb();
+      const db = ctx.db || getDb();
       const bookingReference = generateBookingRef();
       
       const result = await db.insert(bookings).values({
@@ -71,7 +71,7 @@ export const bookingRouter = createRouter({
   getByReference: authedQuery
     .input(z.object({ reference: z.string() }))
     .query(async ({ input, ctx }) => {
-      const db = getDb();
+      const db = ctx.db || getDb();
       const isAdmin = ctx.user.role === "admin";
       
       return db.query.bookings.findFirst({
@@ -90,8 +90,8 @@ export const bookingRouter = createRouter({
         cursor: z.number().optional(),
       }).optional()
     )
-    .query(async ({ input }) => {
-      const db = getDb();
+    .query(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       const limit = input?.limit ?? 20;
       const conditions: any[] = [];
       if (input?.cursor !== undefined) {
@@ -119,7 +119,7 @@ export const bookingRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = ctx.db || getDb();
       
       // Fetch current booking to check if status actually changed
       const currentBooking = await db.query.bookings.findFirst({

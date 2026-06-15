@@ -7,7 +7,9 @@ describe('Destination Router', () => {
   let caller: any;
 
   beforeAll(async () => {
-    db = await setupTestDb();
+    const testDb = await setupTestDb();
+
+    db = testDb.db;
     
     await db.insert(destinations).values([
       {
@@ -28,7 +30,7 @@ describe('Destination Router', () => {
       }
     ]);
 
-    caller = await createTestCaller();
+    caller = await createTestCaller(db);
   });
 
   it('should list all destinations', async () => {

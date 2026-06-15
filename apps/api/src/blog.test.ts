@@ -7,7 +7,8 @@ describe('Blog Router', () => {
   let caller: any;
 
   beforeAll(async () => {
-    db = await setupTestDb();
+    const testDb = await setupTestDb();
+    db = testDb.db;
     
     await db.insert(blogPosts).values([
       {
@@ -36,7 +37,7 @@ describe('Blog Router', () => {
       }
     ]);
 
-    caller = await createTestCaller();
+    caller = await createTestCaller(db);
   });
 
   it('should list only published blogs', async () => {

@@ -6,8 +6,8 @@ import { or, like } from "drizzle-orm";
 export const searchRouter = createRouter({
   global: publicQuery
     .input(z.object({ q: z.string().min(2) }))
-    .query(async ({ input }) => {
-      const db = getDb();
+    .query(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       // SQLite LIKE is case-insensitive by default
       const term = `%${input.q}%`;
 

@@ -12,8 +12,8 @@ export const testimonialRouter = createRouter({
         cursor: z.number().optional(), // last id from previous page
       }).optional()
     )
-    .query(async ({ input }) => {
-      const db = getDb();
+    .query(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       const limit = input?.limit ?? 20;
       const conditions = [eq(testimonials.isActive, true)];
 
@@ -53,8 +53,8 @@ export const testimonialRouter = createRouter({
         packageId: z.number().optional(),
       })
     )
-    .mutation(async ({ input }) => {
-      const db = getDb();
+    .mutation(async ({ input, ctx }) => {
+      const db = ctx.db || getDb();
       return db.insert(testimonials).values({
         name: input.name,
         email: input.email,
@@ -68,8 +68,8 @@ export const testimonialRouter = createRouter({
     }),
   
   // Admin only
-  all: adminQuery.query(async () => {
-    const db = getDb();
+  all: adminQuery.query(async ({ ctx }) => {
+    const db = ctx.db || getDb();
     return db.query.testimonials.findMany({
       orderBy: [desc(testimonials.createdAt)],
     });
@@ -84,7 +84,7 @@ export const testimonialRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = ctx.db || getDb();
       const updates: Record<string, unknown> = {};
       if (input.isVerified !== undefined) updates.isVerified = input.isVerified;
       if (input.isActive !== undefined) updates.isActive = input.isActive;
@@ -98,7 +98,7 @@ export const testimonialRouter = createRouter({
   delete: adminQuery
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = ctx.db || getDb();
       return db.delete(testimonials).where(eq(testimonials.id, input.id));
     }),
 });

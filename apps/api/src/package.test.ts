@@ -7,7 +7,9 @@ describe('Package Router', () => {
   let caller: any;
 
   beforeAll(async () => {
-    db = await setupTestDb();
+    const testDb = await setupTestDb();
+
+    db = testDb.db;
     
     const [dest] = await db.insert(destinations).values({
       name: "Package Dest",
@@ -42,7 +44,7 @@ describe('Package Router', () => {
       }
     ]);
 
-    caller = await createTestCaller();
+    caller = await createTestCaller(db);
   });
 
   it('should list all packages', async () => {

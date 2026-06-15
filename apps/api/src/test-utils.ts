@@ -23,16 +23,16 @@ export async function setupTestDb() {
     migrationsFolder: migrationsPath 
   });
   
-  return db;
+  return { db, url: testDbUrl };
 }
 
-export async function createTestContext(user?: User): Promise<TrpcContext> {
+export async function createTestContext(user?: User, db?: ReturnType<typeof getDb>): Promise<TrpcContext> {
   const req = new Request("http://localhost:4000/api/trpc");
   
   if (user) {
-    const db = getDb();
+    const dbToUse = db || getDb();
     const token = "test-token-" + Math.random().toString(36).substring(7);
-    await db.insert(sessions).values({
+    await dbToUse.insert(sessions).values({
       sessionToken: token,
       userId: user.id,
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
@@ -45,15 +45,15 @@ export async function createTestContext(user?: User): Promise<TrpcContext> {
     resHeaders: new Headers(),
     info: {} as any
   });
-  return { ...baseCtx, user };
+  return { ...baseCtx, user, db };
 }
 
-export async function createAuthenticatedTestCaller(user: User) {
-  const ctx = await createTestContext(user);
+export async function createAuthenticatedTestCaller(user: User, db?: ReturnType<typeof getDb>) {
+  const ctx = await createTestContext(user, db);
   return appRouter.createCaller(ctx);
 }
 
-export async function createTestCaller() {
-  const ctx = await createTestContext();
+export async function createTestCaller(db?: ReturnType<typeof getDb>) {
+  const ctx = await createTestContext(undefined, db);
   return appRouter.createCaller(ctx);
 }

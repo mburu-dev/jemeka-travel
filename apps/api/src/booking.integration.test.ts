@@ -11,7 +11,9 @@ describe('Booking Router Integration', () => {
   let authenticatedCaller: any;
 
   beforeAll(async () => {
-    db = await setupTestDb();
+    const testDb = await setupTestDb();
+
+    db = testDb.db;
     
     // Seed a destination
     const [dest] = await db.insert(destinations).values({
@@ -42,7 +44,7 @@ describe('Booking Router Integration', () => {
     }).returning();
 
     testPackageId = pkg.id;
-    authenticatedCaller = await createAuthenticatedTestCaller(testUser);
+    authenticatedCaller = await createAuthenticatedTestCaller(testUser, db);
   });
 
   it('should create a new booking', async () => {

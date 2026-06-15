@@ -13,7 +13,7 @@ export function getDb(url?: string, authToken?: string) {
   if (url) {
     const client = createClient({
       url,
-      ...(authToken ? { authToken } : {}),
+      ...(authToken ? { authToken } : {})
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return drizzle(client as any, { schema: fullSchema });
@@ -26,7 +26,7 @@ export function getDb(url?: string, authToken?: string) {
     const dbUrl = _processEnv.DATABASE_URL || "file:sqlite.db";
     const token = authToken || _processEnv.DATABASE_AUTH_TOKEN;
     
-    const client = createClient({ 
+    const client = createClient({
       url: dbUrl,
       ...(token ? { authToken: token } : {})
     });
