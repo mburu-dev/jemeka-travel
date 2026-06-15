@@ -20,7 +20,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Lint (web)
         run: npm run lint --workspace=apps/web --if-present
@@ -46,7 +46,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run API tests
         run: npx vitest run --reporter=verbose
@@ -67,7 +67,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build & Deploy API to Cloudflare Workers
         run: npx wrangler deploy

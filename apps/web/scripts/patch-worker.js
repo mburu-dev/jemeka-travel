@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Standalone post-build patcher for the __name polyfill.
  *
