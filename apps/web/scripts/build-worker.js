@@ -14,7 +14,7 @@ if (fs.existsSync(payloadPath)) {
 
 try {
   // 2. Run the OpenNext Cloudflare build
-  execSync('cross-env BUILD_WORKER=1 npx @opennextjs/cloudflare build', { stdio: 'inherit' });
+  execSync('npx cross-env BUILD_WORKER=1 npx @opennextjs/cloudflare build', { stdio: 'inherit' });
 
   // 3. Patch all generated bundles that use __name() without defining it.
   //
