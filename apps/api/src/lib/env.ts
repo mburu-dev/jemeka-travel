@@ -14,4 +14,7 @@ export const env = {
   databaseAuthToken: process.env.DATABASE_AUTH_TOKEN ?? "",
   authSecret: process.env.AUTH_SECRET ?? "",
   frontendUrl: required("FRONTEND_URL"),
+  resendApiKey: process.env.AUTH_RESEND_KEY ?? process.env.RESEND_API_KEY ?? "",
+  posthogApiKey: process.env.NEXT_PUBLIC_POSTHOG_KEY ?? process.env.POSTHOG_API_KEY ?? "",
+  posthogHost: process.env.NEXT_PUBLIC_POSTHOG_HOST ?? process.env.POSTHOG_HOST ?? "https://us.i.posthog.com",
 };

@@ -2,53 +2,91 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
-  build-and-test:
+  lint-and-typecheck:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-    - name: Use Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Lint
-      run: npm run lint --if-present
+      - name: Lint (web)
+        run: npm run lint --workspace=apps/web --if-present
 
-    - name: Type Check
-      run: npx tsc --noEmit
+      - name: Type check (api)
+        run: npx tsc --noEmit
+        working-directory: apps/api
 
-    - name: Test
-      run: npm test
+      - name: Type check (web)
+        run: npx tsc --noEmit
+        working-directory: apps/web
 
-    - name: Build API
-      run: npm run build --workspace=apps/api
+  test:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Deploy API to Cloudflare Workers
-      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-      run: npm run deploy:worker --workspace=apps/api
-      env:
-        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
 
-    - name: Build Web (OpenNext for Cloudflare)
-      run: cross-env BUILD_WORKER=1 npm run build:worker --workspace=apps/web
-      env:
-        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Deploy Web to Cloudflare Workers
-      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-      run: npm run deploy:worker --workspace=apps/web
-      env:
-        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Run API tests
+        run: npx vitest run --reporter=verbose
+        working-directory: apps/api
+
+  build-and-deploy:
+    name: Build & Deploy
+    needs: [lint-and-typecheck, test]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build & Deploy API to Cloudflare Workers
+        run: npx wrangler deploy
+        working-directory: apps/api
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Build Web (OpenNext for Cloudflare)
+        run: node scripts/build-worker.js
+        working-directory: apps/web
+        env:
+          BUILD_WORKER: "1"
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY }}
+
+      - name: Deploy Web to Cloudflare Workers
+        run: npx @opennextjs/cloudflare deploy
+        working-directory: apps/web
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

@@ -9,5 +9,9 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "routes": [
+    { "pattern": "jemekatoursandtravel.com", "custom_domain": true },
+    { "pattern": "www.jemekatoursandtravel.com", "custom_domain": true }
+  ]
 }

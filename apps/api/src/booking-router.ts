@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { createRouter, publicQuery, authedQuery, adminQuery } from "./middleware";
-import { getDb, bookings } from "@jemeka/db";
+import { getDb, bookings, packages } from "@jemeka/db";
 import { eq, desc, and, lt } from "drizzle-orm";
+import { sendBookingConfirmation, sendBookingStatusUpdate } from "./lib/email";
 
 export function generateBookingRef() {
   const prefix = "JMK";
@@ -29,7 +30,7 @@ export const bookingRouter = createRouter({
       const db = getDb();
       const bookingReference = generateBookingRef();
       
-      return db.insert(bookings).values({
+      const result = await db.insert(bookings).values({
         packageId: input.packageId,
         userId: ctx.user.id,
         travelDate: new Date(input.travelDate),
@@ -43,7 +44,28 @@ export const bookingRouter = createRouter({
         bookingReference,
         status: "pending",
         paymentStatus: "pending",
+      }).returning();
+
+      // Send booking confirmation email asynchronously without blocking the response
+      db.query.packages.findFirst({
+        where: eq(packages.id, input.packageId),
+      }).then(async (pkg: any) => {
+        if (pkg) {
+          await sendBookingConfirmation({
+            customerName: input.customerName,
+            customerEmail: input.customerEmail,
+            bookingReference,
+            travelDate: input.travelDate,
+            packageTitle: pkg.title,
+            totalPrice: input.totalPrice,
+          });
+        }
+      }).catch((err: any) => {
+        // Log error but don't fail the request if email sending fails
+        console.error("Failed to trigger booking confirmation email:", err);
       });
+
+      return result;
     }),
 
   getByReference: authedQuery
@@ -98,13 +120,48 @@ export const bookingRouter = createRouter({
     )
     .mutation(async ({ input }) => {
       const db = getDb();
-      const updates: any = { status: input.status };
+      
+      // Fetch current booking to check if status actually changed
+      const currentBooking = await db.query.bookings.findFirst({
+        where: eq(bookings.id, input.id),
+      });
+
+      if (!currentBooking) {
+        throw new Error("Booking not found");
+      }
+
+      const updates: Record<string, unknown> = { status: input.status, updatedAt: new Date() };
       if (input.paymentStatus) {
         updates.paymentStatus = input.paymentStatus;
       }
-      return db
+      
+      const result = await db
         .update(bookings)
         .set(updates)
-        .where(eq(bookings.id, input.id));
+        .where(eq(bookings.id, input.id))
+        .returning();
+
+      // If status changed to something other than pending, send email
+      if (currentBooking.status !== input.status && input.status !== "pending") {
+        db.query.packages.findFirst({
+          where: eq(packages.id, currentBooking.packageId),
+        }).then(async (pkg: any) => {
+          if (pkg) {
+            await sendBookingStatusUpdate({
+              customerName: currentBooking.customerName,
+              customerEmail: currentBooking.customerEmail,
+              bookingReference: currentBooking.bookingReference,
+              travelDate: currentBooking.travelDate.toISOString(),
+              packageTitle: pkg.title,
+              totalPrice: currentBooking.totalPrice,
+              newStatus: input.status as "confirmed" | "cancelled" | "completed",
+            });
+          }
+        }).catch((err: any) => {
+          console.error("Failed to trigger booking status email:", err);
+        });
+      }
+
+      return result;
     }),
 });

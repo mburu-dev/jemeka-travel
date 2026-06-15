@@ -85,7 +85,7 @@ export const testimonialRouter = createRouter({
     )
     .mutation(async ({ input }) => {
       const db = getDb();
-      const updates: any = {};
+      const updates: Record<string, unknown> = {};
       if (input.isVerified !== undefined) updates.isVerified = input.isVerified;
       if (input.isActive !== undefined) updates.isActive = input.isActive;
       

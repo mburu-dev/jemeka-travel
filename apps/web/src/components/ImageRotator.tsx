@@ -60,11 +60,14 @@ export function ImageRotator({
       className={`relative w-full h-full overflow-hidden ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      role="region"
+      aria-label={`${alt} — image gallery`}
+      aria-roledescription="image carousel"
     >
       {/* Current image */}
       <img
         src={validImages[currentIndex]}
-        alt={alt}
+        alt={validImages.length > 1 ? `${alt} — photo ${currentIndex + 1} of ${validImages.length}` : alt}
         className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out ${
           isTransitioning ? "opacity-0 scale-105" : "opacity-100 scale-100"
         } group-hover:scale-110`}
@@ -110,7 +113,8 @@ export function ImageRotator({
                   ? "w-5 h-1.5 bg-white shadow-lg"
                   : "w-1.5 h-1.5 bg-white/60 hover:bg-white/90"
               }`}
-              aria-label={`View image ${i + 1}`}
+              aria-label={`View image ${i + 1} of ${validImages.length}`}
+              aria-current={i === currentIndex ? "true" : undefined}
             />
           ))}
         </div>
@@ -123,9 +127,9 @@ export function ImageRotator({
         </div>
       )}
 
-      {/* Photo count chip — always visible */}
+      {/* Photo count chip — always visible, decorative */}
       {validImages.length > 1 && (
-        <div className="absolute top-2 left-2 z-20 flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full">
+        <div className="absolute top-2 left-2 z-20 flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full" aria-hidden="true">
           <span className="text-white text-[10px] font-semibold tracking-wide">
             ✦ {currentIndex + 1}/{validImages.length}
           </span>

@@ -40,7 +40,7 @@ export function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <nav aria-label="Footer quick links">
             <h3 className="text-lg font-semibold mb-4 text-[#F4A261]">Quick Links</h3>
             <ul className="space-y-3">
               {[
@@ -61,7 +61,7 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Popular Destinations */}
           <div>
@@ -92,19 +92,19 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4 text-[#F4A261]">Contact Us</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#2A9D8F] mt-0.5 shrink-0" />
+                <MapPin className="w-5 h-5 text-[#2A9D8F] mt-0.5 shrink-0" aria-hidden="true" />
                 <span className="text-gray-300 text-sm">
                   PXH3+P46, Utawala, Mihango,<br />
                   Nairobi, Kenya. P.O. Box 46376-00100
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-[#2A9D8F] shrink-0" />
-                <span className="text-gray-300 text-sm">+254 726 912577</span>
+                <Phone className="w-5 h-5 text-[#2A9D8F] shrink-0" aria-hidden="true" />
+                <a href="tel:+254726912577" className="text-gray-300 text-sm hover:text-white transition-colors">+254 726 912577</a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-[#2A9D8F] shrink-0" />
-                <span className="text-gray-300 text-sm">njoros2025@gmail.com</span>
+                <Mail className="w-5 h-5 text-[#2A9D8F] shrink-0" aria-hidden="true" />
+                <a href="mailto:jemeka2030@gmail.com" className="text-gray-300 text-sm hover:text-white transition-colors">jemeka2030@gmail.com</a>
               </li>
             </ul>
           </div>

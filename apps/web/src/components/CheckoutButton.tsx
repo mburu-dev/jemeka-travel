@@ -113,6 +113,9 @@ export function CheckoutButton(props: CheckoutButtonProps) {
       disabled={loading || createBooking.isPending}
       className="w-full font-bold"
       size="lg"
+      type="button"
+      aria-busy={loading || createBooking.isPending}
+      aria-label={loading ? "Processing your booking payment" : `Pay $${props.totalPrice} to book`}
     >
       {loading ? "Processing..." : `Pay $${props.totalPrice} to Book`}
     </Button>

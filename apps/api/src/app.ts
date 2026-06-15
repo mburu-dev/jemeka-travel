@@ -10,6 +10,7 @@ import { getDb } from "@jemeka/db";
 import { sql } from "drizzle-orm";
 import { env } from "./lib/env";
 import paystackWebhook from "./webhooks/paystack";
+import { bookingRateLimit, enquiryRateLimit } from "./lib/rate-limit";
 
 export const app = new Hono();
 
@@ -61,6 +62,18 @@ app.get("/health", async (c) => {
 // Webhooks
 app.route("/api/webhooks/paystack", paystackWebhook);
 
+// Rate limiting on high-risk mutation endpoints
+// tRPC mutations arrive as POST requests with the procedure name in the URL path
+app.use("/api/trpc/booking.create", bookingRateLimit as any);
+app.use("/api/trpc/enquiry.create", enquiryRateLimit as any);
+
+import { PostHog } from "posthog-node";
+
+// Initialize PostHog if API key is provided
+const posthog = env.posthogApiKey 
+  ? new PostHog(env.posthogApiKey, { host: env.posthogHost }) 
+  : null;
+
 // tRPC handler
 app.use("/api/trpc/*", async (c) => {
   return fetchRequestHandler({
@@ -71,9 +84,36 @@ app.use("/api/trpc/*", async (c) => {
     onError({ error, path }) {
       if (error.code === "INTERNAL_SERVER_ERROR") {
         logger.error({ error, path }, "tRPC internal error");
+        if (posthog) {
+          posthog.capture({
+            distinctId: "server",
+            event: "api_internal_error",
+            properties: {
+              path,
+              errorMessage: error.message,
+              stack: error.stack,
+            },
+          });
+        }
       }
     },
   });
+});
+
+app.onError((err, c) => {
+  logger.error({ err, path: c.req.path }, "Unhandled API error");
+  if (posthog) {
+    posthog.capture({
+      distinctId: "server",
+      event: "api_unhandled_error",
+      properties: {
+        path: c.req.path,
+        errorMessage: err.message,
+        stack: err.stack,
+      },
+    });
+  }
+  return c.json({ error: "Internal Server Error" }, 500);
 });
 
 app.all("/api/*", (c) => c.json({ error: "Not Found" }, 404));

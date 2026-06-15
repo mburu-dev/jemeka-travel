@@ -53,7 +53,7 @@ export function Navbar({ searchBar, user }: { searchBar?: React.ReactNode, user?
         scrolled ? "shadow-sm dark:shadow-black/50" : "border-b border-gray-100 dark:border-slate-800"
       }`}
     >
-      <nav className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Main navigation" className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
           {/* LEFT: Logo & Brand Name */}

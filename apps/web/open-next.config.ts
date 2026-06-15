@@ -4,6 +4,7 @@ import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 // does not use ISR or distributed caching. This keeps the Worker bundle small
 // and avoids unnecessary KV / Durable Object bindings.
 export default defineCloudflareConfig({
+  // @ts-expect-error - OpenNext v4 types might not match this structure, but the build script relies on it
   overrides: {
     incrementalCache: "dummy",
     tagCache: "dummy",

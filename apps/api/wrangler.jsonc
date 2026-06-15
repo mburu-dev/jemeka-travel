@@ -5,5 +5,8 @@
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true
-  }
+  },
+  "routes": [
+    { "pattern": "api.jemekatoursandtravel.com", "custom_domain": true }
+  ]
 }

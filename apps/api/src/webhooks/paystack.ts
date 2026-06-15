@@ -40,7 +40,8 @@ paystackWebhook.post("/", async (c) => {
         .set({ 
           paymentStatus: "paid", 
           transactionId: transactionId,
-          status: "confirmed" 
+          status: "confirmed",
+          updatedAt: new Date(),
         })
         .where(eq(bookings.bookingReference, reference));
         

@@ -34,6 +34,7 @@ export const metadata: Metadata = {
   },
 };
 
+import { CSPostHogProvider } from "../providers/posthog-provider";
 import { ThemeProvider } from "../providers/ThemeProvider";
 
 export default function RootLayout({
@@ -47,6 +48,7 @@ export default function RootLayout({
       className={`${inter.variable} ${outfit.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head />
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground" suppressHydrationWarning>
         {/* Skip navigation — WCAG 2.4.1 */}
         <a
@@ -61,7 +63,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <CSPostHogProvider>
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </CSPostHogProvider>
         </ThemeProvider>
       </body>
     </html>

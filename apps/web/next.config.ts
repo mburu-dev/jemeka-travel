@@ -93,6 +93,7 @@ const nextConfig: NextConfig = {
           banner: __nameBanner,
           raw: true,
           entryOnly: false,
+          test: /\.(js|mjs|cjs)$/,
         })
       );
     }

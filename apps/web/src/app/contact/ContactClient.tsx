@@ -75,8 +75,8 @@ export default function ContactClient() {
     {
       icon: Mail,
       title: "Email Us",
-      details: ["njoros2025@gmail.com", "info@jemekatoursandtravel.com"],
-      links: ["mailto:njoros2025@gmail.com", "mailto:info@jemekatoursandtravel.com"],
+      details: ["jemeka2030@gmail.com", "info@jemekatoursandtravel.com"],
+      links: ["mailto:jemeka2030@gmail.com", "mailto:info@jemekatoursandtravel.com"],
     },
     {
       icon: Clock,
@@ -158,11 +158,11 @@ export default function ContactClient() {
                         <span className="text-sm font-medium">+254 726 912577</span>
                       </a>
                       <a
-                        href="mailto:njoros2025@gmail.com"
+                        href="mailto:jemeka2030@gmail.com"
                         className="flex items-center gap-3 text-white/90 hover:text-[#F4A261] transition-colors group"
                       >
                         <Mail className="w-4 h-4 text-[#2A9D8F] group-hover:text-[#F4A261] transition-colors" />
-                        <span className="text-sm font-medium">njoros2025@gmail.com</span>
+                        <span className="text-sm font-medium">jemeka2030@gmail.com</span>
                       </a>
                     </div>
                   </CardContent>
