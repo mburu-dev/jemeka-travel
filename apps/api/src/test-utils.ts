@@ -6,12 +6,15 @@ import type { User } from "@jemeka/db";
 import type { TrpcContext } from "./context";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import path from "path";
-import fs from "fs";
+import os from "os";
 
 export async function setupTestDb() {
   const dbName = `test-${Math.random().toString(36).substring(7)}.db`;
-  const testDbUrl = `file:${dbName}`;
-  // Ensure we clean up later if needed, but since it's a test env, we can just create unique ones
+  // Use an absolute path in the OS temp directory so the path is always valid
+  // on any platform (Linux CI, macOS, Windows) without depending on cwd.
+  const testDbPath = path.join(os.tmpdir(), dbName);
+  const testDbUrl = `file:${testDbPath}`;
+
   const db = getDb(testDbUrl);
   
   // Run migrations

@@ -5,14 +5,25 @@ import * as relations from "./relations";
 
 const fullSchema = { ...schema, ...relations };
 
-let instance: any;
+let instance: ReturnType<typeof drizzle> | undefined;
 
 export function getDb(url?: string, authToken?: string) {
+  // When an explicit URL is provided (e.g. in tests), always create a fresh
+  // client — never return the production singleton for a different database.
+  if (url) {
+    const client = createClient({
+      url,
+      ...(authToken ? { authToken } : {}),
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return drizzle(client as any, { schema: fullSchema });
+  }
+
   if (!instance) {
     // Cloudflare worker fallback for process.env
     const _processEnv = typeof process !== "undefined" && process.env ? (process.env as any) : {};
     
-    const dbUrl = url || _processEnv.DATABASE_URL || "file:sqlite.db";
+    const dbUrl = _processEnv.DATABASE_URL || "file:sqlite.db";
     const token = authToken || _processEnv.DATABASE_AUTH_TOKEN;
     
     const client = createClient({ 
