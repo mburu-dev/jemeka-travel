@@ -20,7 +20,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: rm -f package-lock.json && npm install
+        run: npm ci
 
       - name: Lint (web)
         run: npm run lint --workspace=apps/web --if-present
@@ -46,7 +46,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: rm -f package-lock.json && npm install
+        run: npm ci
 
       - name: Run API tests
         run: npx vitest run --reporter=verbose
@@ -67,7 +67,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: rm -f package-lock.json && npm install
+        run: npm ci
 
       - name: Build & Deploy API to Cloudflare Workers
         run: npx wrangler deploy
