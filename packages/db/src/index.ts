@@ -9,15 +9,16 @@ type DbType = ReturnType<typeof drizzle<typeof fullSchema>>;
 let instance: DbType | undefined;
 
 export function getDb(url?: string, authToken?: string): DbType {
-  // When an explicit URL is provided (e.g. in tests), always create a fresh
-  // client — never return the production singleton for a different database.
+  // When a URL is provided (e.g. from Cloudflare Worker env binding),
+  // set the singleton so subsequent getDb() calls return the same instance.
   if (url) {
     const client = createClient({
       url,
       ...(authToken ? { authToken } : {})
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return drizzle(client as any, { schema: fullSchema });
+    instance = drizzle(client as any, { schema: fullSchema });
+    return instance;
   }
 
   if (!instance) {
