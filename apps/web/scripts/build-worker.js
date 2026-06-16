@@ -13,10 +13,21 @@ if (fs.existsSync(payloadPath)) {
 }
 
 try {
-  // 2. Run the OpenNext Cloudflare build
-  execSync('npx cross-env BUILD_WORKER=1 npx @opennextjs/cloudflare build', { stdio: 'inherit' });
+  // 2. Enable Corepack so the Next.js build doesn't accidentally invoke Yarn
+  //    (GitHub runners have Yarn 1.x pre-installed; if Next.js's getPkgManager
+  //    falls through to execSync('yarn --version') it picks yarn over npm, and
+  //    Yarn Classic crashes on the "packageManager": "npm@10.8.2" field.)
+  execSync('corepack enable', { stdio: 'inherit' });
 
-  // 3. Patch all generated bundles that use __name() without defining it.
+  // 3. Run the OpenNext Cloudflare build
+  //    NEXT_IGNORE_INCORRECT_LOCKFILE prevents Next.js from calling
+  //    getRegistry() to patch the lockfile (another path that triggers yarn).
+  execSync(
+    'npx cross-env BUILD_WORKER=1 NEXT_IGNORE_INCORRECT_LOCKFILE=1 npx @opennextjs/cloudflare build',
+    { stdio: 'inherit' },
+  );
+
+  // 4. Patch all generated bundles that use __name() without defining it.
   //
   //    esbuild's keepNames emits __name() helper calls but omits the helper
   //    declaration when bundling across chunk boundaries. This causes a
@@ -76,7 +87,7 @@ try {
     console.log(`Patched ${patchedCount} bundle(s) with __name polyfill.`);
   }
 } finally {
-  // 4. Always restore the (payload) directory, even if the build fails
+  // 5. Always restore the (payload) directory, even if the build fails
   if (fs.existsSync(hiddenPath)) {
     fs.renameSync(hiddenPath, payloadPath);
     console.log('Restored (payload) directory');
