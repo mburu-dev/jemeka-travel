@@ -1,5 +1,3 @@
-cat /home/claude/jemeka-travel/apps/api/src/test-utils.ts
-Output
 
 import { appRouter } from "./router";
 import { createContext } from "./context";
@@ -9,7 +7,6 @@ import type { User } from "@jemeka/db";
 import type { TrpcContext } from "./context";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import path from "path";
-import os from "os";
 
 export async function setupTestDb() {
   // @libsql/client does not support "mode" or "cache" query parameters.
@@ -22,7 +19,6 @@ export async function setupTestDb() {
   
   // Run migrations
   const migrationsPath = path.resolve(__dirname, "../../../packages/db/src/migrations");
-  console.log("MIGRATION PATH RESOLVED AS:", migrationsPath);
   await migrate(db, { 
     migrationsFolder: migrationsPath 
   });

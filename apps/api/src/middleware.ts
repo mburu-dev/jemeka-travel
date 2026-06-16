@@ -1,5 +1,3 @@
-cat /home/claude/jemeka-travel/apps/api/src/middleware.ts
-Output
 
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
@@ -89,4 +87,3 @@ const isAdmin = t.middleware(async ({ ctx, next }) => {
 
 export const authedQuery = t.procedure.use(isAuthed);
 export const adminQuery = authedQuery.use(isAdmin);
-Done
