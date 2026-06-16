@@ -10,9 +10,9 @@ on:
 # Native binary handling
 # ---------------------------------------------------------------------------
 # Platform-specific native .node add-ons (@tailwindcss/oxide, @ast-grep/napi,
-# @rolldown/binding, lightningcss, libsql) are installed automatically by the
-# root `postinstall` script (scripts/install-native-bindings.js) which runs
-# as part of `npm ci`. No manual workaround steps are needed here.
+# @rolldown/binding, lightningcss, libsql) are installed automatically by
+# scripts/install-native-bindings.js which runs as an explicit step after
+# `npm ci` to avoid npm lock issues.
 # ---------------------------------------------------------------------------
 
 jobs:
@@ -29,8 +29,10 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        # postinstall hook auto-installs missing Linux native bindings
         run: npm ci
+
+      - name: Install Linux native bindings
+        run: node scripts/install-native-bindings.js
 
       - name: Lint (web)
         run: npm run lint --workspace=apps/web --if-present
@@ -58,6 +60,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Linux native bindings
+        run: node scripts/install-native-bindings.js
+
       - name: Run API tests
         run: npx vitest run --reporter=verbose
         working-directory: apps/api
@@ -78,6 +83,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Install Linux native bindings
+        run: node scripts/install-native-bindings.js
 
       - name: Build & Deploy API to Cloudflare Workers
         run: npx wrangler deploy

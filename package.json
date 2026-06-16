@@ -14,8 +14,7 @@
     "build": "turbo run build",
     "build:web": "npm run build --workspace=apps/web",
     "build:api": "npm run build --workspace=apps/api",
-    "test": "turbo run test",
-    "postinstall": "node scripts/install-native-bindings.js"
+    "test": "turbo run test"
   },
   "devDependencies": {
     "concurrently": "^10.0.3",
