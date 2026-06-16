@@ -10,15 +10,13 @@ import os from "os";
 
 export async function setupTestDb() {
   const dbName = `test-${Math.random().toString(36).substring(7)}.db`;
-  // Use an absolute path in the OS temp directory so the path is always valid
-  // on any platform (Linux CI, macOS, Windows) without depending on cwd.
-  const testDbPath = path.join(os.tmpdir(), dbName);
-  const testDbUrl = `file:${testDbPath}`;
+  const testDbUrl = `file:${dbName}?mode=memory&cache=shared`;
 
   const db = getDb(testDbUrl);
   
   // Run migrations
   const migrationsPath = path.resolve(__dirname, "../../../packages/db/src/migrations");
+  console.log("MIGRATION PATH RESOLVED AS:", migrationsPath);
   await migrate(db, { 
     migrationsFolder: migrationsPath 
   });

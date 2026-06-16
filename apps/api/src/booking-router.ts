@@ -118,7 +118,7 @@ export const bookingRouter = createRouter({
         paymentStatus: z.enum(["pending", "partial", "paid", "refunded"]).optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = ctx.db || getDb();
       
       // Fetch current booking to check if status actually changed

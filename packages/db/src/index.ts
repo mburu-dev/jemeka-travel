@@ -4,10 +4,11 @@ import * as schema from "./schema";
 import * as relations from "./relations";
 
 const fullSchema = { ...schema, ...relations };
+type DbType = ReturnType<typeof drizzle<typeof fullSchema>>;
 
-let instance: ReturnType<typeof drizzle> | undefined;
+let instance: DbType | undefined;
 
-export function getDb(url?: string, authToken?: string) {
+export function getDb(url?: string, authToken?: string): DbType {
   // When an explicit URL is provided (e.g. in tests), always create a fresh
   // client — never return the production singleton for a different database.
   if (url) {

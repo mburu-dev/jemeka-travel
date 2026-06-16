@@ -68,7 +68,7 @@ export const enquiryRouter = createRouter({
 
   delete: adminQuery
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = ctx.db || getDb();
       return db.delete(enquiries).where(eq(enquiries.id, input.id));
     }),
