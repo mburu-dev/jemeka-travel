@@ -1,3 +1,6 @@
+cat /home/claude/jemeka-travel/apps/web/src/components/SearchBar.tsx
+Output
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -79,7 +82,7 @@ export function SearchBar() {
                       Destinations
                     </h3>
                     <div className="space-y-1">
-                      {data.destinations.map((dest: { id: number; slug: string; image?: string; name: string; country: string }) => (
+                      {data.destinations.map((dest: { id: number; slug: string; image?: string | null; name: string; country: string }) => (
                         <Link 
                           key={dest.id} 
                           href={`/destinations/${dest.slug}`}
@@ -115,7 +118,7 @@ export function SearchBar() {
                       Tour Packages
                     </h3>
                     <div className="space-y-1">
-                      {data.packages.map((pkg: { id: number; slug: string; image?: string; title: string; category: string; price: string }) => (
+                      {data.packages.map((pkg: { id: number; slug: string; image?: string | null; title: string; category: string; price: string }) => (
                         <Link 
                           key={pkg.id} 
                           href={`/packages/${pkg.slug}`}
@@ -154,3 +157,27 @@ export function SearchBar() {
     </div>
   );
 }
+Done
+Now here's the step-by-step push process:
+
+Step 1 — Open your project folder in File Explorer (D:\JEMEKA TOURS) and navigate to each file path below. Replace the entire file content by selecting all (Ctrl+A) and pasting the code above:
+
+File to edit	Path on your PC
+test-utils.ts	D:\JEMEKA TOURS\apps\api\src\test-utils.ts
+middleware.ts	D:\JEMEKA TOURS\apps\api\src\middleware.ts
+SearchBar.tsx	D:\JEMEKA TOURS\apps\web\src\components\SearchBar.tsx
+Step 2 — Save all three files (Ctrl+S in each).
+
+Step 3 — Back in your PowerShell terminal at D:\JEMEKA TOURS, run these commands one by one:
+
+powershell
+git add apps/api/src/test-utils.ts apps/api/src/middleware.ts apps/web/src/components/SearchBar.tsx
+powershell
+git commit -m "fix: resolve CI test failures and TypeScript errors"
+powershell
+git push origin master
+After the push, GitHub Actions will re-run and you should see all tests passing. Let me know if any step gives an error and I'll walk you through it.
+
+
+
+Claude Fable 5 is currently unavailable.

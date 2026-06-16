@@ -1,3 +1,6 @@
+cat /home/claude/jemeka-travel/apps/api/src/middleware.ts
+Output
+
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
@@ -26,10 +29,11 @@ const t = initTRPC.context<TrpcContext>().create({
 export const createRouter = t.router;
 export const publicQuery = t.procedure;
 
-// Helper to verify Auth.js session token from database
-async function verifySessionToken(token: string) {
+// Helper to verify Auth.js session token from database.
+// Accepts an optional db instance so tests can supply their in-memory DB
+// instead of the production singleton returned by the no-arg getDb() call.
+async function verifySessionToken(token: string, db = getDb()) {
   try {
-    const db = getDb();
     const sessionWithUser = await db
       .select({
         user: users,
@@ -60,7 +64,7 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  const user = await verifySessionToken(sessionToken);
+  const user = await verifySessionToken(sessionToken, ctx.db);
 
   if (!user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -85,3 +89,4 @@ const isAdmin = t.middleware(async ({ ctx, next }) => {
 
 export const authedQuery = t.procedure.use(isAuthed);
 export const adminQuery = authedQuery.use(isAdmin);
+Done

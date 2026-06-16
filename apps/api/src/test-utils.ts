@@ -1,3 +1,6 @@
+cat /home/claude/jemeka-travel/apps/api/src/test-utils.ts
+Output
+
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { getDb } from "@jemeka/db";
@@ -9,8 +12,11 @@ import path from "path";
 import os from "os";
 
 export async function setupTestDb() {
-  const dbName = `test-${Math.random().toString(36).substring(7)}.db`;
-  const testDbUrl = `file:${dbName}?mode=memory&cache=shared`;
+  // @libsql/client does not support "mode" or "cache" query parameters.
+  // Use the standard SQLite in-memory URI ":memory:" instead.
+  // Each test suite gets an isolated in-memory DB because getDb() creates a
+  // fresh client whenever an explicit URL is provided (no singleton reuse).
+  const testDbUrl = `:memory:`;
 
   const db = getDb(testDbUrl);
   
