@@ -9,7 +9,15 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Jemeka Tours | Unforgettable African Journeys",
     description: "Experience the raw magic of Africa with expertly crafted safaris, cultural immersions and beach escapes tailored to you.",
-    images: ["/images/hero-slides/hero-slide-01-desktop.webp"],
+    images: [
+      {
+        url: "/logo-optimized.png",
+        width: 1200,
+        height: 630,
+        alt: "Jemeka Tours and Travel Logo",
+      },
+      "/images/hero-slides/hero-slide-01-desktop.webp",
+    ],
   },
 };
 

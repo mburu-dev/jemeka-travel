@@ -31,6 +31,27 @@ export const metadata: Metadata = {
     siteName: "Jemeka Tours and Travel",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/logo-optimized.png",
+        width: 1200,
+        height: 630,
+        alt: "Jemeka Tours and Travel Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jemeka Tours and Travel",
+    description: "Discover the magic of East Africa with Jemeka Tours.",
+    images: ["/logo-optimized.png"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/logo.png", sizes: "any", type: "image/png" },
+    ],
+    apple: [{ url: "/logo.png" }],
   },
   alternates: {
     canonical: "./",
