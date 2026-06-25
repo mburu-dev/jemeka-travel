@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Link from 'next/link';
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
@@ -6,6 +7,14 @@ import { Button } from "@jemeka/ui/components/ui/button";
 import { Card, CardContent } from "@jemeka/ui/components/ui/card";
 import { Shield, ArrowLeft } from "lucide-react";
 import AdminClient from "./AdminClient";
+
+export const metadata: Metadata = {
+  title: "Admin | Jemeka Tours",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AdminPage() {
   let session = null;

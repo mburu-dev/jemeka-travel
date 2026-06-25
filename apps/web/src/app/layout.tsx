@@ -32,6 +32,9 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
+  alternates: {
+    canonical: "./",
+  },
 };
 
 import { CSPostHogProvider } from "../providers/posthog-provider";

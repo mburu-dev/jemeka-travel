@@ -60,3 +60,5 @@ auth-wal
 fix_layouts.js
 *.log
 *.html
+!googlef04faa69ade664ad.html
+!apps/web/public/googlef04faa69ade664ad.html

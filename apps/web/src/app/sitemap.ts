@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { trpcServer } from '@/lib/trpc';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://jemekatours.com';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://jemekatoursandtravel.com';
 
   // Static routes
   const routes = [
@@ -12,7 +12,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/destinations',
     '/packages',
     '/testimonials',
-    '/login',
+    '/services',
+    '/cookie-policy',
+    '/privacy-policy',
+    '/terms-of-service',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
